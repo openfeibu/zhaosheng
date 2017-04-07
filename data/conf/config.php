@@ -62,8 +62,8 @@ return array (
   'geetest' => 
   array (
     'geetest_on' => false,
-    'captcha_id' => '',
-    'private_key' => '',
+    'captcha_id' => 'admin',
+    'private_key' => 'wzjadmin',
   ),
   'log' => 
   array (
