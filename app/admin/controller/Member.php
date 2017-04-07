@@ -80,12 +80,18 @@ class Member extends Base
      * 添加用户显示
      */
 	public function member_add(){
+		$admin=Db::name('admin')->alias("a")->join(config('database.prefix').'auth_group_access b','a.admin_id =b.uid')
+					->join(config('database.prefix').'auth_group c','b.group_id = c.id')
+					->where(array('a.admin_id'=>session('admin_auth.aid')))
+					->find();
+		$this->assign('admin',$admin);
 		$province = Db::name('Region')->where ( array('pid'=>1) )->select ();
 		$this->assign('province',$province);
 		$member_group=Db::name('member_group')->order('member_group_order')->select();
 		$this->assign('member_group',$member_group);
 		$school_list = Db::name('school')->select();
 		$this->assign('school_list',$school_list);
+
 		return $this->fetch();
 	}
 
@@ -96,6 +102,12 @@ class Member extends Base
 		if (!request()->isAjax()){
 			$this->error('提交方式不正确',url('admin/Member/member_list'));
 		}else{
+			$admin=Db::name('admin')->alias("a")->join(config('database.prefix').'auth_group_access b','a.admin_id =b.uid')
+						->join(config('database.prefix').'auth_group c','b.group_id = c.id')
+						->where(array('a.admin_id'=>session('admin_auth.aid')))
+						->find();
+			$school_id = $admin['school_id'] ? $admin['school_id'] : input('school_id');
+			$major_id = $admin['major_id'] ? $admin['major_id'] : input('major_id');
 			$member_list_salt=random(10);
 			$sl_data=array(
 				'member_list_groupid'=>1,
@@ -116,8 +128,8 @@ class Member extends Base
 				'signature'=>input('signature'),
 				'score'=>input('score',0,'intval'),
 				'coin'=>input('coin',0,'intval'),
-				'school_id' => input('school_id'),
-				'major_id' => input('major_id')
+				'school_id' => $school_id,
+				'major_id' => $major_id
 			);
 			$rst=MemberList::create($sl_data);
 			$data['member_list_id'] = $rst->member_list_id;
@@ -138,6 +150,11 @@ class Member extends Base
      * 修改用户信息界面
      */
 	public function member_edit(){
+		$admin=Db::name('admin')->alias("a")->join(config('database.prefix').'auth_group_access b','a.admin_id =b.uid')
+					->join(config('database.prefix').'auth_group c','b.group_id = c.id')
+					->where(array('a.admin_id'=>session('admin_auth.aid')))
+					->find();
+		$this->assign('admin',$admin);
 		$province = Db::name('Region')->where ( array('pid'=>1) )->select ();
 		$member_group=Db::name('member_group')->order('member_group_order')->select();
 		$member_list_edit=Db::name('member_list')->where(array('member_list_id'=>input('member_list_id')))->find();
@@ -167,6 +184,11 @@ class Member extends Base
 		if (!request()->isAjax()){
 			$this->error('提交方式不正确',url('admin/Member/member_list'));
 		}else{
+			$admin=Db::name('admin')->alias("a")->join(config('database.prefix').'auth_group_access b','a.admin_id =b.uid')
+						->join(config('database.prefix').'auth_group c','b.group_id = c.id')
+						->where(array('a.admin_id'=>session('admin_auth.aid')))
+						->find();
+
 			$sl_data['member_list_id']=input('member_list_id');
 			$sl_data['member_list_groupid']=1;
 			$sl_data['member_list_username']=input('member_list_username');
@@ -187,10 +209,13 @@ class Member extends Base
 			$sl_data['member_list_open']=input('member_list_open',0);
 			$sl_data['user_url']=input('user_url');
 			$sl_data['signature']=input('signature');
-			$sl_data['score']=input('score',0,'intval');
-			$sl_data['coin']=input('coin',0,'intval');
-			$sl_data['school_id']=input('school_id',0,'intval');
-			$sl_data['major_id']=input('major_id',0,'intval');
+			if(!$admin['school_id'])
+			{
+				$sl_data['score']=input('score',0,'intval');
+				$sl_data['coin']=input('coin',0,'intval');
+			}
+			$sl_data['school_id']=$school_id;
+			$sl_data['major_id']=$major_id;
 			$rst=MemberList::update($sl_data);
 			if($rst!==false){
 				$this->success('会员修改成功');

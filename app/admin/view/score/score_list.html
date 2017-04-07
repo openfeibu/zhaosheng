@@ -21,7 +21,7 @@
 							</thead>
 							{foreach name="data" item="v"}
                             <tr>
-                                <td height="28" >{$v.member_list_username}</td>
+                                <td height="28" ><a href="{:url('admin/score/score_add',array('member_list_id'=>$v['member_list_id']))}">{$v.member_list_username}</a></td>
                                 <td>{$v.member_list_nickname}</td>
                                 {foreach name="$v['major_score_list']" item="val"}
                                 <td>{$val} </td>

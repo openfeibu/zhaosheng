@@ -144,6 +144,7 @@
 						</div>
 					</div>
 					<div class="space-4"></div>-->
+					{if condition="empty($admin['school_id'])"}
 					<div class="form-group">
 						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 所属中职：  </label>
 						<div class="col-sm-10">
@@ -166,7 +167,7 @@
 						</div>
 					</div>
 					<div class="space-4"></div>
-
+					{/if}
 					<div class="form-group">
 						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 是否开启（禁止后用户将不能登录）： </label>
 						<div class="col-sm-10" style="padding-top:5px;">
@@ -193,9 +194,9 @@
 							</button>
 
 							&nbsp; &nbsp; &nbsp;
-							<button class="btn" type="reset">
+							<button class="btn" type="reset" onclick="window.history.go(-1);">
 								<i class="ace-icon fa fa-undo bigger-110"></i>
-								重置
+								返回
 							</button>
 						</div>
 					</div>

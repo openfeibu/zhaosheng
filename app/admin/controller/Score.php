@@ -37,7 +37,7 @@ class Score extends Base
 		foreach($data as $key => $val)
 		{
 			$data[$key]['major_score_list'] = json_decode($val['major_score'],true);
-			$data[$key]['status_desc'] = $status[$val['major_score_status']];
+			$data[$key]['status_desc'] = $val['major_score_status'] == 2 ? "<span class='red'>" . $status[$val['major_score_status']] ."</span>" : $status[$val['major_score_status']];
 		}
 
 		$page = $score_list->render();
@@ -67,7 +67,7 @@ class Score extends Base
 		foreach($data as $key => $val)
 		{
 			$data[$key]['major_score_list'] = json_decode($val['major_score'],true);
-			$data[$key]['status_desc'] = $status[$val['major_score_status']];
+			$data[$key]['status_desc'] = $val['major_score_status'] == 2 ? "<span class='red'>" . $status[$val['major_score_status']] ."</span>" : $status[$val['major_score_status']];
 			$major = Db::name('major')->where(array('major_id' => $val['major_id']))->find();
 			$major_score = json_decode($major['score'],true);
 			$major_score = array_filter($major_score);
@@ -156,7 +156,7 @@ class Score extends Base
 		foreach($data as $key => $val)
 		{
 			$data[$key]['major_score_list'] = json_decode($val['major_score'],true);
-			$data[$key]['status_desc'] = $val['recruit_score_status'] == -1 ? '' : $status[$val['recruit_score_status']];
+			$data[$key]['status_desc'] = $val['recruit_score_status'] == 2 ? "<span class='red'>".$status[$val['recruit_score_status']].'</span>' : $status[$val['recruit_score_status']];
 			$major = Db::name('major')->where(array('major_id' => $val['major_id']))->find();
 			$major_score = json_decode($major['score'],true);
 			$major_score = array_filter($major_score);
@@ -231,7 +231,7 @@ class Score extends Base
 		foreach($data as $key => $val)
 		{
 			$data[$key]['major_score_list'] = json_decode($val['major_score'],true);
-			$data[$key]['status_desc'] = $val['recruit_score_status'] == -1 ? '' : $status[$val['recruit_score_status']];
+			$data[$key]['status_desc'] = $val['recruit_score_status'] == 2 ? "<span class='red'>".$status[$val['recruit_score_status']].'</span>' : $status[$val['recruit_score_status']];
 			$major = Db::name('major')->where(array('major_id' => $val['major_id']))->find();
 			$major_score = json_decode($major['score'],true);
 			$major_score = array_filter($major_score);
