@@ -25,7 +25,7 @@
                      <label for="">验证码：</label>
                      <input type="text" name="verify" style="width:70px"/>
                      <div class="code">
-                       <img src="{:url('home/Login/verify')}"  onClick="this.src='{:url('home/Login/verify')}'+'?'+Math.random()" >
+                       <img src="{:url('home/Login/verify')}"  onClick="this.src='{:url('home/Login/verify')}'+'?'+Math.random()" class="verify" >
                      </div>
 
                    </div>
@@ -193,7 +193,8 @@
           // success
           window.location.href = '{:url('home/center/index')}';
         }else if (data.code == 0){
-          alert(data.msg);
+            $(".verify").attr('src',"{:url('home/Login/verify')}"+'?'+Math.random())
+            alert(data.msg);
         }
 
     });
