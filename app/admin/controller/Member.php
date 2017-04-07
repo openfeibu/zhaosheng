@@ -188,6 +188,8 @@ class Member extends Base
 						->join(config('database.prefix').'auth_group c','b.group_id = c.id')
 						->where(array('a.admin_id'=>session('admin_auth.aid')))
 						->find();
+			$school_id = $admin['school_id'] ? $admin['school_id'] : input('school_id',0,'intval');
+			$major_id = $admin['major_id'] ? $admin['major_id'] : input('major_id',0,'intval');
 
 			$sl_data['member_list_id']=input('member_list_id');
 			$sl_data['member_list_groupid']=1;
@@ -209,11 +211,8 @@ class Member extends Base
 			$sl_data['member_list_open']=input('member_list_open',0);
 			$sl_data['user_url']=input('user_url');
 			$sl_data['signature']=input('signature');
-			if(!$admin['school_id'])
-			{
-				$sl_data['score']=input('score',0,'intval');
-				$sl_data['coin']=input('coin',0,'intval');
-			}
+			$sl_data['score']=input('score',0,'intval');
+			$sl_data['coin']=input('coin',0,'intval');
 			$sl_data['school_id']=$school_id;
 			$sl_data['major_id']=$major_id;
 			$rst=MemberList::update($sl_data);

@@ -24,6 +24,12 @@ class Center extends Base
 		$date = date('  Y  年  m  月  d  日',$time);
 		$num=str_pad($this->user['member_list_id'],4,"0",STR_PAD_LEFT);
 		$this->assign('num',$num);
+		$major = Db::name('major')->where(array('major_id' => $this->user['major_id']))->find();
+		$this->assign('major',$major);
+		$school = Db::name('school')->where(array('school_id' => $this->user['school_id']))->find();
+		$this->assign('school',$school);
+		$recruit_major = Db::name('recruit_major')->where(array('recruit_major_id' => $major['recruit_major_id']))->find();
+		$this->assign('recruit_major',$recruit_major);
 		$this->assign($this->user);
 		$this->assign('info',$info);
 		$this->assign('date',$date);
