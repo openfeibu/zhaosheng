@@ -66,6 +66,24 @@ class School extends Base
 		}
 		$srt = Db::name('school')->where(array('school_id' => $school_id))->update(array('school_name' => input('school_name')));
 	}
+	public function school_del()
+	{
+		$p=input('p');
+		$school_id = input('school_id','0');
+		$data_admin = Db::name('admin')->where(array('school_id' => $school_id))->find();
+		$data_member = Db::name('member_list')->where(array('school_id' => $school_id))->find();
+		if($data_admin || $data_member)
+		{
+			$this->error('删除失败,请先删除该专业下的中职管理员及用户',url('admin/School/major_list', array('p' => $p)));
+		}
+		$rst=Db::name('school')->where(array('school_id'=>$school_id))->delete();
+		if($rst!==false){
+			$this->success('删除成功',url('admin/School/school_list', array('p' => $p)));
+		}else{
+			$this->error('删除失败',url('admin/School/school_list', array('p' => $p)));
+		}
+
+	}
 	public function major_add()
 	{
 		$school_id = input('school_id','0');
@@ -166,6 +184,24 @@ class School extends Base
 			$this->error('修改失败',url('admin/School/major_edit',array('major_id' => $major_id)));
 		}
 	}
+	public function major_del()
+	{
+		$p=input('p');
+		$major_id = input('major_id','0');
+		$data_admin = Db::name('admin')->where(array('major_id' => $major_id))->find();
+		$data_member = Db::name('member_list')->where(array('major_id' => $major_id))->find();
+		if($data_admin || $data_member)
+		{
+			$this->error('删除失败,请先删除该专业下的中职管理员及用户',url('admin/School/major_list', array('p' => $p)));
+		}
+		$rst=Db::name('major')->where(array('major_id'=>$major_id))->delete();
+		if($rst!==false){
+			$this->success('删除成功',url('admin/School/major_list', array('p' => $p)));
+		}else{
+			$this->error('删除失败',url('admin/School/major_list', array('p' => $p)));
+		}
+
+	}
 	public function recruit_major_list()
 	{
 		$search_name = input('search_name');
@@ -217,6 +253,28 @@ class School extends Base
 		}else{
 			$this->error('修改失败',url('admin/School/recruit_major_edit',array('recruit_major_id' => $recruit_major_id)));
 		}
+	}
+	public function recruit_major_del()
+	{
+		$p=input('p');
+		$recruit_major_id = input('recruit_major_id','0');
+
+		$data_admin = Db::name('admin')->alias('am')
+						->join(config('database.prefix').'major mj','mj.major_id = am.major_id')
+						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
+						->where(array('rm.recruit_major_id' => $recruit_major_id))
+						->find();
+		if($data_admin)
+		{
+			$this->error('删除失败,请先删除该专业下的中职管理员及用户',url('admin/School/major_list', array('p' => $p)));
+		}
+		$rst=Db::name('recruit_major')->where(array('recruit_major_id'=>$recruit_major_id))->delete();
+		if($rst!==false){
+			$this->success('删除成功',url('admin/School/recruit_major_list', array('p' => $p)));
+		}else{
+			$this->error('删除失败',url('admin/School/recruit_major_list', array('p' => $p)));
+		}
+
 	}
 	public function ajax_major(){
 		if (!request()->isAjax()){
