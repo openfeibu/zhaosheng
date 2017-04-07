@@ -20,8 +20,13 @@ class Center extends Base
 	public function index()
     {
 		$info = $this->getMemberInfo();
+		$time = time();
+		$date = date('  Y  年  m  月  d  日',$time);
+		$num=str_pad($this->user['member_list_id'],4,"0",STR_PAD_LEFT);
+		$this->assign('num',$num);
 		$this->assign($this->user);
 		$this->assign('info',$info);
+		$this->assign('date',$date);
 		return $this->view->fetch('user:center');
     }
 	public function grade()
