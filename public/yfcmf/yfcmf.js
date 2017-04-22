@@ -218,14 +218,14 @@ $(function () {
             $btn=$(this);
         $.post($url, {x: val}, function (data) {
             if (data.code==1) {
-                if (data.msg == '未激活') {
-                    var a = '<button class="btn btn-minier btn-danger">未激活</button>';
-                    $btn.children('div').html(a).attr('title','未激活');
+                if (data.msg == '未通过') {
+                    var a = '<button class="btn btn-minier btn-danger">未通过</button>';
+                    $btn.children('div').html(a).attr('title','未通过');
 					$btn.next(".score_add").hide();
                     return false;
                 } else {
-                    var b = '<button class="btn btn-minier btn-yellow">已激活</button>';
-                    $btn.children('div').html(b).attr('title','已激活');
+                    var b = '<button class="btn btn-minier btn-yellow">已通过</button>';
+                    $btn.children('div').html(b).attr('title','已通过');
 					$btn.next(".score_add").show();
                     return false;
                 }
@@ -828,7 +828,7 @@ function delall(id, url) {
                     window.onbeforeunload = null;
                 }
 				if(data.tab !=undefined){
-					backup(data.tab, tab.id != data.tab.id);					
+					backup(data.tab, tab.id != data.tab.id);
 				}
             } else {
                 updateAlert(data.msg, 'alert-error');
@@ -898,16 +898,16 @@ $(function () {
 })(jQuery);
 /*************************************************************************** 选择列表框change事件********************************************************/
 (function ($) {
-	$('body').on('change','.ajax_change',function () {		
+	$('body').on('change','.ajax_change',function () {
         var $form = $(this).parents("form");
 		$.ajax({
 		    url:$form.attr('action'),
 			type:"POST",
-			data:$form.serialize(),            
+			data:$form.serialize(),
 			success: function(data,status){
 				$("#ajax-data").html(data);
 			}
-		});	
+		});
     });
     $('body').on('click','.range_inputs .applyBtn',function () {
         var reservation=$('#reservation');
@@ -924,15 +924,15 @@ $(function () {
     });
     })(jQuery);
 (function ($) {
-	$('body').on('change','.submit_change',function () {		
-        var $form = $(this).parents("form");	
+	$('body').on('change','.submit_change',function () {
+        var $form = $(this).parents("form");
         $form.submit();
     });
     })(jQuery);
 function ajax_page(page) {
 	$.ajax({
 		type:"POST",
-		data:$('#list-filter').serialize()+'&page='+page,            
+		data:$('#list-filter').serialize()+'&page='+page,
 		success: function(data,status){
 			$("#ajax-data").html(data);
 		}
@@ -943,11 +943,11 @@ $(function () {
 	$('body').on('click','.ajax-search-form',function () {
 		$.ajax({
 			type:"POST",
-			data:$(this).parents("form").serialize(),            
+			data:$(this).parents("form").serialize(),
 			success: function(data,status){
 				$("#ajax-data").html(data);
 			}
-		});	
+		});
         return false;
     });
 });
@@ -958,11 +958,11 @@ $(function () {
 		alert($(this).data('type'));
 		$.ajax({
 			type:"POST",
-			data:{type:$(this).data('type')},            
+			data:{type:$(this).data('type')},
 			success: function(data,status){
 				$("#ajax-data").html(data);
 			}
-		});	
+		});
         return false;
     });
 });
@@ -972,11 +972,11 @@ $(function () {
 		$(this).parents("form")[0].reset();
 		$.ajax({
 			type:"POST",
-			data:{},            
+			data:{},
 			success: function(data,status){
 				$("#ajax-data").html(data);
 			}
-		});	
+		});
         return false;
     });
 });
@@ -988,14 +988,14 @@ $(function () {
 		$.ajax({
 			type:"POST",
 			url:url,
-			data:{},            
+			data:{},
 			success: function(data,status){
 				layer.alert(data.msg, {icon: 6}, function (index) {
                     layer.close(index);
                     window.location.href = data.url;
                 });
 			}
-		});	
+		});
         return false;
     });
 });
@@ -1075,4 +1075,22 @@ $(function(){
 			}
 		});
 	});
+	$("#recruit_school").change(function(){
+		var school_id = $(this).val();
+		$.ajax({
+			url: "/admin/School/ajax_recruit_major",
+			data:{'school_id':school_id},
+			success: function(data){
+				$("#recruit_major").html(data.html);
+			}
+		});
+	});
+	$(".personal_table input").blur(function(){
+		var member_list_id = $('#member_list_id').val();
+      	var value  = $(this).val();
+     	var name = $(this).attr('name');
+     	$.post("/admin/Member/update_info",{'name':name,'value':value,'member_list_id':member_list_id},function(data){
+         	console.log(data);
+      	});
+    });
 });
