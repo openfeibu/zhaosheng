@@ -13,15 +13,15 @@
 			</div>
 			<form name="admin_list_sea" class="form-search" id="list-filter" method="post" action="{:url('admin/Member/member_list')}">
 				<div class="col-xs-12 col-sm-4  margintop5">
-					<select name="opentype_check" class="ajax_change">
+					<!-- <select name="opentype_check" class="ajax_change">
 						<option value="">按开启状态</option>
 						<option value="1" {if condition="$opentype_check eq '1'"}selected="selected"{/if}>开启</option>
 						<option value="0" {if condition="$opentype_check eq '0'"}selected="selected"{/if} >禁用</option>
-					</select>
+					</select> -->
 					<select name="activetype_check" class="ajax_change">
-						<option value="">按激活状态</option>
-						<option value="1" {if condition="$activetype_check eq '1'"}selected="selected"{/if}>已激活</option>
-						<option value="0" {if condition="$activetype_check eq '0'"}selected="selected"{/if} >未激活</option>
+						<option value="">按审核状态</option>
+						<option value="1" {if condition="$activetype_check eq '1'"}selected="selected"{/if}>已通过</option>
+						<option value="0" {if condition="$activetype_check eq '0'"}selected="selected"{/if} >为通过</option>
 					</select>
 					<select name="school_id" class="ajax_change" id="school">
 						<option value="">选择学校</option>
@@ -88,7 +88,6 @@
 							<th class="hidden-sm hidden-xs">会员用户组</th>
 							<th class="hidden-sm hidden-xs">积分</th>-->
 							<th class="hidden-sm hidden-xs">添加时间</th>
-							<th class="hidden-xs">状态</th>
 							<th class="hidden-xs">激活(上传资料审核)</th>
 							<th style="border-right:#CCC solid 1px;">操作</th>
 						</tr>

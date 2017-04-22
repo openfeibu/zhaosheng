@@ -69,11 +69,48 @@
     var value  = $(this).val();
     var name = $(this).attr('name');
     $.post("{:url('home/center/update_info')}",{'name':name,'value':value},function(data){
+        if($("."+name).length>0){
+            $("."+name).text(value);
+        }
         console.log(data);
      });
    });
+   $(".personal_table input").bind('input propertychange', function() {
+        var valType = $(this).attr("valType");
+        var leng = $(this).attr("leng");
+        var val = $(this).val();
+        if(valType == undefined){
+            return false;
+        }
+        if(valType == "n"){
+            //只能填数字
+            if(isNaN(val)){
+                if(isNaN(parseFloat(val))){
+                    $(this).val("");
+                }else {
+                    $(this).val(parseFloat(val));
+                }
+
+            }
+        }
+        if(leng != undefined){
+            $(this).val($(this).val().substring(0,leng));
+        }
+    });
+    $("#sexSelect").change(function(){
+        var val = $(this).val();
+        $('[name="sex"]').val(val);
+        $('[name="sex"]').blur();
+    })
 </script>
 <script>
+function check_preview(oper)
+{
+    if(confirm("只能打印一次，确定打印么？"))
+    {
+        preview(oper);
+    }
+}
 function preview(oper)
 {
 if (oper < 10)

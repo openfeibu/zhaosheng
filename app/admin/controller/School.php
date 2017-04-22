@@ -65,6 +65,7 @@ class School extends Base
 			$this->error('不存在中职学校',url('admin/School/major_list'));
 		}
 		$srt = Db::name('school')->where(array('school_id' => $school_id))->update(array('school_name' => input('school_name')));
+		$this->success('更新成功');
 	}
 	public function school_del()
 	{
@@ -108,14 +109,19 @@ class School extends Base
 		$search_name = input('search_name');
 		$map=array();
 		if($search_name){
-			$map['major_name']= array('like',"%".$search_name."%");
+			$map['m.major_name']= array('like',"%".$search_name."%");
 		}
 		if($school_id)
 		{
-			$map['school_id']= array('like',"%".$school_id."%");
+			$map['m.school_id']= array('like',"%".$school_id."%");
 		}
 
-		$major_list = Db::name('major')->where($map)->order('major_id')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
+		$major_list = Db::name('major')->alias('m')
+					->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = m.recruit_major_id')
+					->where($map)
+					->order('major_id')
+					->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
+
 		$data = $major_list->all();
 		foreach($data as $key => $major)
 		{
@@ -128,6 +134,45 @@ class School extends Base
 		$this->assign('search_name',$search_name);
 		return $this->fetch();
 	}
+
+	public function secondary_vocat_major_edit()
+	{
+		$major_id= $this->admin['major_id'];
+		$major = Db::name('major')->where(array('major_id' => $major_id))->find();
+		if(!$major)
+		{
+			$this->error('不存在该专业');
+		}
+		$school = Db::name('school')->where(array('school_id' => $major['school_id']))->find();
+		$major_score = json_decode($major['score'],true);
+		$recruit_major_list = Db::name('recruit_major')->select();
+		$this->assign('recruit_major_list',$recruit_major_list);
+		$this->assign('school',$school);
+		$this->assign('major',$major);
+		$this->assign('major_score',$major_score);
+		return $this->fetch();
+	}
+
+	public function secondary_vocat_major_runedit()
+	{
+		$major_id= $this->admin['major_id'];
+		$major = Db::name('major')->where(array('major_id' => $major_id))->find();
+		if(!$major)
+		{
+			$this->error('不存在该专业');
+		}
+		$score = $_POST['score'];
+		$data = [
+			'score' => json_encode($score),
+		];
+		$rst = Db::name('major')->where(array('major_id' => $major['major_id']))->update($data);
+		if($rst!==false){
+			$this->success('修改成功',url('admin/School/secondary_vocat_major_edit'));
+		}else{
+			$this->error('修改失败',url('admin/School/secondary_vocat_major_edit'));
+		}
+	}
+
 	public function major_edit()
 	{
 		$major_id= input('major_id','0');
@@ -158,6 +203,7 @@ class School extends Base
 			'major_name' => input('major_name'),
 			'school_id'	 => $school_id,
 			'recruit_major_id' => input('recruit_major_id'),
+			'major_code' => input('major_code'),
 			'score' => json_encode($score)
 		];
 		MajorModel::create($data);
@@ -175,6 +221,7 @@ class School extends Base
 		$data = [
 			'major_name' => input('major_name'),
 			'score' => json_encode($score),
+			'major_code' => input('major_code'),
 			'recruit_major_id' => input('recruit_major_id'),
 		];
 		$rst = Db::name('major')->where(array('major_id' => $major['major_id']))->update($data);
@@ -207,9 +254,19 @@ class School extends Base
 		$search_name = input('search_name');
 		$map=array();
 		if($search_name){
-			$map['major_name']= array('like',"%".$search_name."%");
+			$map['rm.major_name']= array('like',"%".$search_name."%");
 		}
-		$major_list = Db::name('recruit_major')->where($map)->order('recruit_major_id')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
+		$major_list = Db::name('recruit_major')->alias('rm')
+							->join(config('database.prefix').'major mj','mj.recruit_major_id = rm.recruit_major_id')
+							->field(array(
+								'rm.*',
+								'sum(mj.number) as zs_number'
+							))
+							->where($map)
+							->order('rm.recruit_major_id')
+							->group('rm.recruit_major_id')
+							->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
+
 		$page = $major_list->render();
 		$this->assign('major_list',$major_list);
 		$this->assign('search_name',$search_name);
@@ -235,7 +292,8 @@ class School extends Base
 	{
 		$data = [
 			'recruit_major_name' => input('recruit_major_name'),
-			'number'	 => input('number'),
+			'min_score'
+		//	'number'	 => input('number'),
 		];
 		RecruitMajorModel::create($data);
 		$this->success('添加成功',url('admin/School/recruit_major_list'));
@@ -245,7 +303,7 @@ class School extends Base
 		$recruit_major_id= input('recruit_major_id','0');
 		$data = [
 			'recruit_major_name' => input('recruit_major_name'),
-			'number'	 => input('number'),
+			//'number'	 => input('number'),
 		];
 		$rst = Db::name('recruit_major')->where(array('recruit_major_id' => $recruit_major_id))->update($data);
 		if($rst!==false){
@@ -276,16 +334,22 @@ class School extends Base
 		}
 
 	}
-	public function ajax_major(){
+	public function ajax_recruit_major(){
 		if (!request()->isAjax()){
 			$this->error('提交方式不正确');
 		}else{
 			$school_id = input('school_id','0');
-			$major_list = Db::name('major')->where(array('school_id' => $school_id))->select();
+			$recruit_major_list = Db::name('recruit_major')->alias('rm')
+										->join(config('database.prefix').'major mj','mj.recruit_major_id = rm.recruit_major_id')
+										->join(config('database.prefix').'admin am','am.major_id = mj.major_id')
+										->where(array('am.school_id' => $school_id))
+										->field('rm.recruit_major_name,rm.recruit_major_id')
+										->distinct('recruit_major_id')
+										->select();
 			$html = '<option value="">请选择专业</option>';
-			foreach($major_list as $key => $major)
+			foreach($recruit_major_list as $key => $major)
 			{
-				$html .= "<option value='".$major['major_id']."'>".$major['major_name']."</option>";
+				$html .= "<option value='".$major['recruit_major_id']."'>".$major['recruit_major_name']."</option>";
 			}
 			return [
 				'code' => 200,

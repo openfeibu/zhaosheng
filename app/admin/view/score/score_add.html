@@ -13,7 +13,7 @@
 	</div>
 	<div class="row">
 	    <div class="col-xs-12">
-                <form class="form-horizontal" name="score_edit" method="post" action="{:url('admin/Score/score_runadd')}">
+                <form class="form-horizontal ajaxForm" name="score_edit" method="post" action="{:url('admin/Score/score_runadd')}">
 			<input type="hidden" name="member_list_id" value="{$member_list_edit.member_list_id}"/>
 			{foreach name="major_score" item="v" key="k"}
 			<div class="form-group">

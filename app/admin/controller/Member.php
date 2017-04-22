@@ -21,7 +21,7 @@ class Member extends Base
 		$opentype_check=input('opentype_check','');
 		$activetype_check=input('activetype_check','');
 		$school_id = input('school_id','');
-		$major_id = input('major_id','');
+		$major_id = input('major_id',$this->admin['major_id'] );
 		$where=array();
 		if($opentype_check !== ''){
 			$where['member_list_open']=$opentype_check;
@@ -48,21 +48,30 @@ class Member extends Base
 		$show=preg_replace("(<a[^>]*page[=|/](\d+).+?>(.+?)<\/a>)","<a href='javascript:ajax_page($1);'>$2</a>",$show);
 
 		$data = $member_list->all();
-		foreach ($data as $key => $value) {
+		foreach ($data as $k => $value) {
 			$major_score_arr = [];
 			$major_score_desc = $major_score_total = '';
+			$major_score_key =array_filter(json_decode($value['major_score_key'],true));
 			if($value['major_score']){
-				$major_score_key =array_filter(json_decode($value['major_score_key'],true));
 				$major_score_arr = json_decode($value['major_score'],true);
 				$major_score_desc = major_score_desc($major_score_key,$major_score_arr);
 				$major_score_total = handle_major_score($major_score_arr);
 			}
-			$data[$key]['major_score_arr'] = $major_score_arr;
-			$data[$key]['major_score_desc'] = $major_score_desc;
-			$data[$key]['major_score_total'] = $major_score_total;
-			$data[$key]['total_score'] = $major_score_total + $value['recruit_score'];
+			else{
+				$major_score_arr = json_decode($value['major_score'],true);
+				$major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
+			}
+			$data[$k]['major_score_arr'] = $major_score_arr;
+			$data[$k]['major_score_desc'] = $major_score_desc;
+			$data[$k]['major_score_total'] = $major_score_total;
+			$data[$k]['total_score'] = $major_score_total + $value['recruit_score'];
 		}
-
+		if($this->admin['major_id'])
+		{
+			$major = Db::name('major')->where(array('major_id' => $this->admin['major_id']))->find();
+			$major_score_key =array_filter(json_decode($major['score'],true));
+			$this->assign('major_score_key',$major_score_key);
+		}
 		$school_list = Db::name('school')->select();
 		$this->assign('school_list',$school_list);
 		$this->assign('opentype_check',$opentype_check);
@@ -71,11 +80,20 @@ class Member extends Base
 		$this->assign('page',$show);
 		$this->assign('val',$key);
 		if(request()->isAjax()){
+			if($this->admin['major_id'])
+			{
+				return $this->fetch('sec_vocat_ajax_member_list');
+			}
 			return $this->fetch('ajax_member_list');
 		}else{
+			if($this->admin['major_id'])
+			{
+				return $this->fetch('sec_vocat_member_list');
+			}
 			return $this->fetch();
 		}
 	}
+
 	/*
      * 添加用户显示
      */
@@ -162,7 +180,7 @@ class Member extends Base
 		$town=Db::name('Region')->where ( array('pid'=>$member_list_edit['member_list_city']) )->select ();
 		$school_list = Db::name('school')->select();
 		$major_list = Db::name('major')->where(array('school_id' => $member_list_edit['school_id']))->select();
-		$info = $this->getMemberInfo($member_list_edit);
+		$info =  MemberList::getMember(input('member_list_id'));
 		$major = Db::name('major')->where(array('major_id' => $member_list_edit['major_id']))->find();
 		$major_score = json_decode($major['score'],true);
 		$major_score = array_filter($major_score);
@@ -527,5 +545,45 @@ class Member extends Base
 		$info['prize'] = json_decode($info['prize'],true);
 		$info['family'] = json_decode($info['family'],true);
 		return $info;
+	}
+	public function getMember($member_list_id)
+	{
+		$member= Db::name('member_list')->alias('m')
+					->join(config('database.prefix').'member_info mi','m.member_list_id =mi.member_list_id')
+					->where(array('member_list_id' => $member_list_id))->find();
+		return $member;
+	}
+	public function update_info()
+	{
+		$member_list_id = input('member_list_id');
+		$member_list_edit=Db::name('member_list')->where(array('member_list_id'=>$member_list_id))->find();
+		$info = $this->getMemberInfo($member_list_edit);
+		$name = input('name');
+		$value = input('value');
+		if(strstr($name,'certificate'))
+		{
+			$type = "certificate";
+		}
+		else if(strstr($name,'prize'))
+		{
+			$type = "prize";
+		}
+		else if(strstr($name,'resume'))
+		{
+			$type = "resume";
+		}
+		else if(strstr($name,'family')){
+			$type = "family";
+		}
+		if(isset($type))
+		{
+			$arr = $info[$type];
+			$vaArr = explode('_',$name);
+			$arr[$vaArr['1']][$vaArr['0']] = $value;
+			$name = $type;
+			$value = json_encode($arr);
+		}
+		Db::name('member_info')->where(array('member_list_id'=>$member_list_id))->update(array($name => $value));
+
 	}
 }

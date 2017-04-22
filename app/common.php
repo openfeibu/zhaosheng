@@ -1649,3 +1649,11 @@ function major_score_desc($major_score_key,$major_score_arr)
 	}
 	return $html;
 }
+function handle_major_score_arr($major_score_key,$major_score_arr)
+{
+	$arr = array();
+	foreach ($major_score_key as $key => $value) {
+		$arr[$value] = $major_score_arr[$key] ? $major_score_arr[$key] : '';
+	}
+	return $arr;
+}

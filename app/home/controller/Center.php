@@ -9,6 +9,7 @@
 namespace app\home\controller;
 
 use think\Db;
+use app\admin\model\MemberList;
 
 class Center extends Base
 {
@@ -19,7 +20,7 @@ class Center extends Base
 	}
 	public function index()
     {
-		$info = $this->getMemberInfo();
+		$info = MemberList::getMember($this->user['member_list_id']);
 		$time = time();
 		$date = date('  Y  年  m  月  d  日',$time);
 		$num=str_pad($this->user['member_list_id'],4,"0",STR_PAD_LEFT);
