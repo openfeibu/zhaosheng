@@ -206,6 +206,7 @@ body{background: #eeeeee;}
 .k-s-content{
     border:1px solid #999;
     text-align: center;
+    position: relative;
 }
 .k-w-table {
     border-style:solid;
@@ -227,7 +228,7 @@ body{background: #eeeeee;}
 .updatePass input[type="submit"]{width: 90px;height: 38px;cursor: pointer;background: #971f21;color: #fff;border:1px solid #971f21;border-radius: 2px;margin:30px auto 0 auto;display: block;}
 .updatePass input[type="submit"]:hover{background: #984142}
 
-
+#sexSelect{width: 100%;height: 100%;position: absolute;top:0;left: 0;opacity: 0;filter:alpha(opacity=0);z-index: 999;}
 
 <!---->
 .fb-page{text-align: center;margin:20px 0 0 0;}
