@@ -1093,4 +1093,23 @@ $(function(){
          	console.log(data);
       	});
     });
+	$('.hanle_count').click(function(){
+		var count = $("input[name='score[]']").length;
+		console.log(count);
+		if($(this).hasClass('fa-plus-circle'))
+		{
+			if(count <=4)
+			{
+				$(this).before('<input type="text" name="score[]" value="" required/>');
+			}
+		}
+		if($(this).hasClass('fa-minus-circle'))
+		{
+			if(count >=4)
+			{
+				$("input[name='score[]']").last().remove();
+			}
+		}
+
+	});
 });
