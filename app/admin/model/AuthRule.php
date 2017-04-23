@@ -48,8 +48,21 @@ class AuthRule extends Model
     {
         $id=$this->get_url_id('',1);
         $pid=self::where('id',$id)->value('pid');
+        $uid=session('admin_auth.aid');
+        if(!in_array($uid,$this->not_check_id)){
+            $auth_ids_list=cache('auth_ids_list_'.$uid);
+            if(empty($auth_ids_list)){
+                $auth = new Auth();
+                $auth_ids_list=$auth->getAuthList($uid,1,'id');
+                cache('auth_ids_list_'.$uid,$auth_ids_list);
+            }
+            if(empty($auth_ids_list)) return [];
+            $where['id']=array('in',$auth_ids_list);
+        }
+        $where['status'] = 1;
+        $where['pid'] = $pid;
 		//取$pid下子菜单
-		$menus=self::where(array('status'=>1,'pid'=>$pid))->order('sort')->select();
+		$menus=self::where($where)->order('sort')->select();
         return $menus;
     }
     /**
