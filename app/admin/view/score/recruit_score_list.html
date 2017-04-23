@@ -1,7 +1,7 @@
 {extend name="admin@public/base" /}
 {block name="main-content"}
 	<div class="page-content">
-    
+
 		<div class="row">
 			<div class="col-xs-12">
 				<div>
@@ -11,8 +11,8 @@
 						<table class="table table-striped table-bordered table-hover" id="dynamic-table">
 							<thead>
 							<tr>
-								<th>身份证</th>
 								<th>姓名</th>
+								<th>身份证</th>
                                 <th>所在专业</th>
                                 <th>报考专业</th>
                                 <th>基础理论成绩 </th>
@@ -20,11 +20,11 @@
                                 <th>状态</th>
 							</tr>
 							</thead>
-                            
+
 							{foreach name="data" item="v"}
                             <tr>
-                                <td height="28" >{$v.member_list_username}</td>
-                                <td>{$v.member_list_nickname}</td>
+                                <td height="28" >{$v.member_list_nickname}</td>
+                                <td>{$v.member_list_username}</td>
                                 <td>{$v.major_name}</td>
                                 <td>{$v.recruit_major_name}</td>
                                 <td>
