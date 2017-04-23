@@ -89,7 +89,7 @@ class Matriculate extends Base
     }
     public function export()
     {
-        $recruit_major_id = input('recruit_major_id','1');
+        $recruit_major_id = input('recruit_major_id');
         $where['rm.recruit_major_id'] = $recruit_major_id;
         $recruit_major = Db::name('recruit_major')->alias('rm')
 							->join(config('database.prefix').'major mj','mj.recruit_major_id = rm.recruit_major_id')
@@ -133,7 +133,6 @@ class Matriculate extends Base
             {
                 $data[$key]['admission_status'] = 0;
             }
-
 		}
         array_multisort(array_column($data,'admission_status'),SORT_DESC,array_column($data,'total_score'),SORT_DESC,$data);
         foreach ($data as $key => $value) {

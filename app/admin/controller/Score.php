@@ -26,9 +26,10 @@ class Score extends Base
 
 		$score_list = Db::name('major_score')->alias("ms")
 						->join(config('database.prefix').'member_list m','m.member_list_id = ms.member_list_id')
+                        ->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
 						->where(array('m.major_id' => $admin['major_id']))
                         ->order('m.member_list_id desc')
-						->field('ms.major_score, ms.major_score_id,ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id')
+						->field('ms.major_score, ms.major_score_id,ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
 		$data = $score_list->all();
@@ -36,7 +37,10 @@ class Score extends Base
 
 		foreach($data as $key => $val)
 		{
-			$data[$key]['major_score_list'] = json_decode($val['major_score'],true);
+            $major_score_key =array_filter(json_decode($val['major_score_key'],true));
+            $major_score_arr = json_decode($val['major_score'],true);
+            $major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
+            $data[$key]['major_score_arr'] = $major_score_arr;
 			$data[$key]['status_desc'] = $val['major_score_status'] == 2 ? "<span class='red'>" . $status[$val['major_score_status']] ."</span>" : $status[$val['major_score_status']];
 		}
 

@@ -68,12 +68,17 @@
    $(".personal_table input").blur(function(){
     var value  = $(this).val();
     var name = $(this).attr('name');
-    $.post("{:url('home/center/update_info')}",{'name':name,'value':value},function(data){
-        if($("."+name).length>0){
-            $("."+name).text(value);
-        }
-        console.log(data);
-     });
+    if($(this).hasClass("noBlur")){
+        return false;
+    }else{
+        $.post("{:url('home/center/update_info')}",{'name':name,'value':value},function(data){
+            if($("."+name).length>0){
+                $("."+name).text(value);
+            }
+            console.log(data);
+         });
+    }
+
    });
    $(".personal_table input").bind('input propertychange', function() {
         var valType = $(this).attr("valType");
