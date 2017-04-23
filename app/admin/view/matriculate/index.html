@@ -12,7 +12,7 @@
 				</a>
 			</div>
 			<form name="admin_list_sea" class="form-search" id="list-filter" method="post" action="{:url('admin/Matriculate/index')}">
-                <div class="col-xs-12 col-sm-4  margintop5">
+                <div class="col-xs-12 col-sm-8  margintop5">
 					<select name="school_id" id="recruit_school">
 						<option value="">选择学校</option>
 						{foreach name="school_list" item="v"}
@@ -22,6 +22,9 @@
 					<select name="recruit_major_id" class="ajax_change" id="recruit_major">
 						<option value="">选择高职专业</option>
 					</select>
+				</div>
+				<div class="col-xs-12 col-sm-2  margintop5">
+					<a href="{:url('admin/Matriculate/export')}" onclick="javascript:var recruit_major_id = $('#recruit_major').val();wondow.location.href='{:url('admin/Matriculate/export')}'"><i class="fa fa-download export"></i></a>
 				</div>
 			</form>
 		</div>
@@ -33,8 +36,9 @@
 					<table class="table table-striped table-bordered table-hover" id="dynamic-table">
 						<thead>
 						<tr>
-							<th>身份证</th>
 							<th>姓名</th>
+							<th>中职考生号</th>
+							<th>身份证</th>
                             <th>高职专业</th>
 							<th>核定理论成绩</th>
 							<th>技能考核成绩</th>

@@ -1,8 +1,9 @@
 {if condition="!empty($member_list)"}
 {foreach name="member_list" item="v"}
 	<tr>
-		<td>{$v.member_list_username}</td>
 		<td>{$v.member_list_nickname}</td>
+		<td>{$v.ZexamineeNumber}</td>
+		<td>{$v.member_list_username}</td>
 		<td>{$v.recruit_major_name}</td>
 		<td>{$v.major_score_total}</td>
 		<td>{$v.recruit_score}</td>
@@ -13,6 +14,6 @@
 {/foreach}
 {else}
 	<tr>
-		<td colspan="8" align="center">暂无数据，请选择学校及高职专业</td>
+		<td colspan="9" align="center">暂无数据，请选择学校及高职专业</td>
 	</tr>
 {/if}
