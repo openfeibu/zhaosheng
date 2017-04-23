@@ -28,9 +28,7 @@
                                 <td>{$v.major_name}</td>
                                 <td>{$v.recruit_major_name}</td>
                                 <td>
-									{foreach name="$v['major_score_key']" item="val" key='key'}
-										<span style="margin-left:5px;">{$val} : {$v['major_score_list'][$key]}</span>
-									{/foreach}
+									{$v.major_score_desc}
 								</td>
                                 <td><input type="text" name="recruit_score" value="{$v.recruit_score}" class="recruit_score" data-id="{$v.member_list_id}"></td>
                                <td><span class="status_{$v.member_list_id}">{$v['status_desc']}</span></td>

@@ -39,8 +39,10 @@ class Score extends Base
 		{
             $major_score_key =array_filter(json_decode($val['major_score_key'],true));
             $major_score_arr = json_decode($val['major_score'],true);
+            $major_score_desc = major_score_desc($major_score_key,$major_score_arr);
             $major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
             $data[$key]['major_score_arr'] = $major_score_arr;
+            $data[$key]['major_score_desc'] = $major_score_desc;
 			$data[$key]['status_desc'] = $val['major_score_status'] == 2 ? "<span class='red'>" . $status[$val['major_score_status']] ."</span>" : $status[$val['major_score_status']];
 		}
 
@@ -62,7 +64,7 @@ class Score extends Base
 						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
 						->where(array('ms.major_score_status' => $activetype_check))
                         ->order('m.member_list_id desc')
-						->field('ms.major_score, ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name')
+						->field('ms.major_score, ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
 		$data = $score_list->all();
@@ -70,7 +72,12 @@ class Score extends Base
 
 		foreach($data as $key => $val)
 		{
-			$data[$key]['major_score_list'] = json_decode($val['major_score'],true);
+            $major_score_key =array_filter(json_decode($val['major_score_key'],true));
+            $major_score_arr = json_decode($val['major_score'],true);
+            $major_score_desc = major_score_desc($major_score_key,$major_score_arr);
+            $major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
+            $data[$key]['major_score_arr'] = $major_score_arr;
+            $data[$key]['major_score_desc'] = $major_score_desc;
 			$data[$key]['status_desc'] = $val['major_score_status'] == 2 ? "<span class='red'>" . $status[$val['major_score_status']] ."</span>" : $status[$val['major_score_status']];
 			$major = Db::name('major')->where(array('major_id' => $val['major_id']))->find();
 			$major_score = json_decode($major['score'],true);
@@ -151,7 +158,7 @@ class Score extends Base
 						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
 						->where(array('ms.major_score_status' => 1))
                         ->order('ms.member_list_id desc')
-						->field('ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name')
+						->field('ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
 		$data = $score_list->all();
@@ -159,7 +166,12 @@ class Score extends Base
 
 		foreach($data as $key => $val)
 		{
-			$data[$key]['major_score_list'] = json_decode($val['major_score'],true);
+            $major_score_key =array_filter(json_decode($val['major_score_key'],true));
+            $major_score_arr = json_decode($val['major_score'],true);
+            $major_score_desc = major_score_desc($major_score_key,$major_score_arr);
+            $major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
+            $data[$key]['major_score_arr'] = $major_score_arr;
+            $data[$key]['major_score_desc'] = $major_score_desc;
 			$data[$key]['status_desc'] = $val['recruit_score_status'] == 2 ? "<span class='red'>".$status[$val['recruit_score_status']].'</span>' : $status[$val['recruit_score_status']];
 			$major = Db::name('major')->where(array('major_id' => $val['major_id']))->find();
 			$major_score = json_decode($major['score'],true);
@@ -226,7 +238,7 @@ class Score extends Base
 						->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
 						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
 						->where(array('ms.recruit_score_status' => 0))
-						->field('ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name')
+						->field('ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
 		$data = $score_list->all();
@@ -234,7 +246,12 @@ class Score extends Base
 
 		foreach($data as $key => $val)
 		{
-			$data[$key]['major_score_list'] = json_decode($val['major_score'],true);
+            $major_score_key =array_filter(json_decode($val['major_score_key'],true));
+            $major_score_arr = json_decode($val['major_score'],true);
+            $major_score_desc = major_score_desc($major_score_key,$major_score_arr);
+            $major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
+            $data[$key]['major_score_arr'] = $major_score_arr;
+            $data[$key]['major_score_desc'] = $major_score_desc;
 			$data[$key]['status_desc'] = $val['recruit_score_status'] == 2 ? "<span class='red'>".$status[$val['recruit_score_status']].'</span>' : $status[$val['recruit_score_status']];
 			$major = Db::name('major')->where(array('major_id' => $val['major_id']))->find();
 			$major_score = json_decode($major['score'],true);

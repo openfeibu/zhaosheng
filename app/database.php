@@ -12,6 +12,15 @@
 return [
     // 数据库类型
     'type'           => 'mysql',
+/*
+    'hostname'       => '127.0.0.1',
+    // 数据库名
+    'database'       => 'zhaosheng',
+    // 用户名
+    'username'       => 'root',
+    // 密码
+    'password'       => 'root',
+    */
     // 服务器地址
     'hostname'       => '211.66.88.153',
     // 数据库名
@@ -20,6 +29,7 @@ return [
     'username'       => 'feibukeji',
     // 密码
     'password'       => 'bgyrtksithv,1*&($AC',
+
     // 端口
     'hostport'       => '3306',
     // 连接dsn
