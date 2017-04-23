@@ -1100,14 +1100,16 @@ $(function(){
 		{
 			if(count <=4)
 			{
-				$(this).before('<input type="text" name="score[]" value="" required/>');
+				var k = count+1;
+				var html = '<div class="form-group major_score_group"><label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 科目'+k+'： </label><div class="col-sm-10"><input type="text" name="score[]" value="" /></div></div>';
+				$(this).parent().parent().before(html);
 			}
 		}
 		if($(this).hasClass('fa-minus-circle'))
 		{
 			if(count >=4)
 			{
-				$("input[name='score[]']").last().remove();
+				$(".major_score_group").last().remove();
 			}
 		}
 
