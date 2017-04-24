@@ -26,11 +26,12 @@ class Score extends Base
 					->find();
 		$score_list = Db::name('major_score')->alias("ms")
 						->join(config('database.prefix').'member_list m','m.member_list_id = ms.member_list_id')
+                        ->join(config('database.prefix').'member_info mi','m.member_list_id = mi.member_list_id')
                         ->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
                         ->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = m.major_id')
 						->where(array('m.major_id' => $admin['major_id']))
                         ->order('m.member_list_id desc')
-						->field('ms.major_score, ms.major_score_id,ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,mj.score as major_score_key')
+						->field('ms.major_score, ms.major_score_id,ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,mj.score as major_score_key,mj.major_name,mi.ZexamineeNumber')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
 		$data = $score_list->all();
