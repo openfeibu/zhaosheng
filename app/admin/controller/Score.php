@@ -30,8 +30,8 @@ class Score extends Base
                         ->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
                         ->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = m.major_id')
 						->where(array('m.major_id' => $admin['major_id']))
-                        ->order('m.member_list_id desc')
-						->field('ms.major_score, ms.major_score_id,ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,mj.score as major_score_key,mj.major_name,mi.ZexamineeNumber')
+                        ->order('ms.major_score_status desc')
+						->field('ms.major_score, ms.major_score_id,ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,mj.score as major_score_key,mj.major_name,mj.major_name,mi.ZexamineeNumber')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
 		$data = $score_list->all();
@@ -46,6 +46,8 @@ class Score extends Base
             $data[$key]['major_score_arr'] = $major_score_arr;
             $data[$key]['major_score_desc'] = $major_score_desc;
 			$data[$key]['status_desc'] = $val['major_score_status'] == 2 ? "<span class='red'>" . $status[$val['major_score_status']] ."</span>" : $status[$val['major_score_status']];
+            $major_score_total = handle_major_score($major_score_arr);
+            $data[$key]['major_score_total'] = $major_score_total;
 		}
 
 		$page = $score_list->render();

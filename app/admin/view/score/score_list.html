@@ -12,10 +12,11 @@
 							<tr>
 								<th>姓名</th>
 								<th>身份证</th>
-								<th>中职考生号</th>
+								<th>中职专业</th>
                                 {foreach name="$major_score" item="v"}
                                 <th>{$v} </th>
                                 {/foreach}
+								<th>核定理论成绩</th>
                                 <th>状态</th>
 							</tr>
 							</thead>
@@ -23,11 +24,12 @@
                             <tr>
                                 <td height="28" ><a href="{:url('admin/score/score_add',array('member_list_id'=>$v['member_list_id']))}">{$v.member_list_nickname}</a></td>
                                 <td>{$v.member_list_username}</td>
-								<td>{$v.ZexamineeNumber}</td>
+								<td>{$v.major_name}</td>
                                 {foreach name="$v['major_score_arr']" item="val"}
                                 <td>{$val} </td>
                                 {/foreach}
                                 </td>
+								<td>{$v.major_score_total}</td>
                                 <td>{$v['status_desc']}</td>
 								<!-- <td>
 									<div class="hidden-sm hidden-xs action-buttons">
