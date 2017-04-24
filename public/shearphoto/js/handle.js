@@ -15,7 +15,7 @@ window.ShearPhoto.MINGGE(function() {
         HTML5MAX:500, //默认请设0 (最大尺寸做事)， HTML上传截图最大宽度， 宽度越大，HTML5截出来的图片容量越大，服务器压力就大，截图就更清淅
         HTML5Quality:0.9,	//截好的截图  0至1范围可选（可填小数）   HTML5切图的质量   为1时 最高
         HTML5FilesSize:50,      //如果是HTML5切图时，选择的图片不能超过多少，单位M
-        HTML5Effects:true,//是否开启图片特效功能给用户  可选true false,  提示：有HTML5浏览器才会开启的！当然开启HTML5切图，该设置才有效
+        HTML5Effects:false,//是否开启图片特效功能给用户  可选true false,  提示：有HTML5浏览器才会开启的！当然开启HTML5切图，该设置才有效
         HTML5ZIP:[900,0.9],//HTML5截图前载入的大图 是否压缩图片(数组成员 是数字)
         preview:[150],// 开启动态预览图片 (数组成员整数型，禁止含小数点 可选false 和数组)
         url:relativeUrl+"php/shearphoto.php",   //后端处理地址
