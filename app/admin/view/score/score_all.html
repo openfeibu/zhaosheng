@@ -1,40 +1,23 @@
 {extend name="admin@public/base" /}
 {block name="main-content"}
 	<div class="page-content">
-        <!--
-        <div class="row maintop">
-			<div class="col-xs-5 col-sm-2  margintop5">
-				<a href="{:url('admin/Member/member_add')}">
-					<button class="btn btn-sm btn-danger">
-						<i class="ace-icon fa fa-bolt bigger-110"></i>
-						添加会员
-					</button>
-				</a>
-			</div>
-			<form name="admin_list_sea" class="form-search" id="list-filter" method="post" action="{:url('admin/Score/score_all')}">
-				<div class="col-xs-12 col-sm-4  margintop5">
+		<div class="row maintop">
 
-					<select name="activetype_check" class="ajax_change">
-						<option value="">按激活状态</option>
-                        <option value="2" {if condition="$activetype_check eq '0'"}selected="selected"{/if} >不通过</option>
-						<option value="1" {if condition="$activetype_check eq '1'"}selected="selected"{/if}>已通过</option>
-						<option value="0" {if condition="$activetype_check eq '0'"}selected="selected"{/if} >未审核</option>
+			<form name="admin_list_sea" class="form-search" id="list-filter" method="post" action="{:url('admin/score/score_all')}">
+				<div class="col-xs-12 col-sm-4  margintop5">
+					<select name="school_id" class="ajax_change" id="recruit_school">
+						<option value="">选择学校</option>
+						{foreach name="school_list" item="v"}
+							<option value="{$v.school_id}" >{$v.school_name}</option>
+						{/foreach}
+					</select>
+					<select name="recruit_major_id" class="ajax_change" id="recruit_major">
+						<option value="">选择高职专业</option>
 					</select>
 				</div>
 
-				<div class="col-xs-4 col-sm-3 margintop5">
-					<div class="input-group-btn">
-						<a href="{:url('admin/Member/member_list')}">
-							<button type="button" class="btn btn-sm  btn-purple ajax-display-all">
-								<span class="ace-icon fa fa-globe icon-on-right bigger-110"></span>
-								显示全部
-							</button>
-						</a>
-					</div>
-				</div>
 			</form>
 		</div>
-        -->
 		<div class="row">
 			<div class="col-xs-12">
 				<div>
@@ -59,32 +42,9 @@
 							</tr>
 							</thead>
 
-							{foreach name="data" item="v"}
-                            <tr>
-                                <td class="hidden-xs" height="28" >
-									<label class="pos-rel">
-										<input name="n_id[]" id="navid" class="ace" type="checkbox" value="{$v.major_score_id}">
-										<span class="lbl"></span>
-									</label>{$v.major_score_id}
-								</td>
-                                <td height="28" >{$v.member_list_nickname}</td>
-                                <td>{$v.member_list_username}</td>
-								<td>{$v.major_name}</td>
-                                <td>{$v.recruit_major_name}</td>
-                                <td>
-									{$v.major_score_desc}
-								</td>
-                                <td>{$v['status_desc']}</td>
-
-                            </tr>
-							{/foreach}
-                            <tr>
-                                <td height="50" align="center">
-                                    <button id="btnsubmit" class="btn btn-white btn-blue btn-sm hidden-xs btn-active">通过</button>
-                                    <button id="btnsubmit" class="btn btn-white btn-yellow btn-sm hidden-xs btn-unactive">不通过</button>
-                                </td>
-								<td colspan="6" align="right">{$page}</td>
-							</tr>
+							<tbody id="ajax-data">
+								{include file="score/ajax_score_all"/}
+							</tbody>
 						</table>
 					</form>
 				</div>

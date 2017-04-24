@@ -346,7 +346,7 @@ class School extends Base
 										->field('rm.recruit_major_name,rm.recruit_major_id')
 										->distinct('recruit_major_id')
 										->select();
-			$html = '<option value="">请选择专业</option>';
+			$html = '<option value="">请选择高职专业</option>';
 			foreach($recruit_major_list as $key => $major)
 			{
 				$html .= "<option value='".$major['recruit_major_id']."'>".$major['recruit_major_name']."</option>";
@@ -363,7 +363,7 @@ class School extends Base
 		}else{
 			$school_id = input('school_id','0');
 			$major_list = Db::name('major')->where(array('school_id' => $school_id))->select();
-			$html = '<option value="">请选择专业</option>';
+			$html = '<option value="">请选择中职专业</option>';
 			foreach($major_list as $key => $major)
 			{
 				$html .= "<option value='".$major['major_id']."'>".$major['major_name']."</option>";

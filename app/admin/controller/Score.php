@@ -19,14 +19,15 @@ class Score extends Base
 {
     public function score_list()
     {
+
         $admin=Db::name('admin')->alias("a")->join(config('database.prefix').'auth_group_access b','a.admin_id =b.uid')
 					->join(config('database.prefix').'auth_group c','b.group_id = c.id')
 					->where(array('a.admin_id'=>session('admin_auth.aid')))
 					->find();
-
 		$score_list = Db::name('major_score')->alias("ms")
 						->join(config('database.prefix').'member_list m','m.member_list_id = ms.member_list_id')
                         ->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
+                        ->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = m.major_id')
 						->where(array('m.major_id' => $admin['major_id']))
                         ->order('m.member_list_id desc')
 						->field('ms.major_score, ms.major_score_id,ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,mj.score as major_score_key')
@@ -57,12 +58,26 @@ class Score extends Base
     }
 	 public function score_all()
     {
-		$activetype_check = input("activetype_check",'0');
+        $major_id = input('major_id','');
+        $recruit_major_id = input('recruit_major_id','');
+        $school_id = input('school_id','');
+        $map = ['major_score_status' => 0];
+        if($major_id){
+            $map['m.major_id'] = $major_id;
+        }
+        if($school_id){
+            $map['m.school_id'] = $school_id;
+        }
+        if($recruit_major_id){
+            $map['rm.recruit_major_id'] = $recruit_major_id;
+        }
+
+
 		$score_list = Db::name('major_score')->alias("ms")
 						->join(config('database.prefix').'member_list m','m.member_list_id = ms.member_list_id')
 						->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
 						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
-						->where(array('ms.major_score_status' => $activetype_check))
+						->where($map)
                         ->order('m.member_list_id desc')
 						->field('ms.major_score, ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
@@ -86,10 +101,15 @@ class Score extends Base
 		}
 
 		$page = $score_list->render();
-		$this->assign('activetype_check',$activetype_check);
+        $school_list = Db::name('school')->select();
+		$this->assign('school_list',$school_list);
 		$this->assign('data',$data);
 		$this->assign('page',$page);
-        return $this->fetch();
+        if(request()->isAjax()){
+            return $this->fetch('ajax_score_all');
+        }else{
+            return $this->fetch();
+        }
     }
     public function score_add()
     {
@@ -152,11 +172,46 @@ class Score extends Base
 	}
     public function recruit_score_list()
     {
+        $major_id = input('major_id','');
+        $recruit_major_id = input('recruit_major_id','');
+        $school_id = input('school_id','');
+        $major_score_status = input('major_score_status','');
+        $map = [];
+        if($major_id){
+            $map['m.major_id'] = $major_id;
+        }
+        if($school_id){
+            $map['m.school_id'] = $school_id;
+        }
+        if($recruit_major_id){
+            $map['rm.recruit_major_id'] = $recruit_major_id;
+        }
+        if($major_score_status != ''){
+            $map['ms.major_score_status'] = $major_score_status;
+        }
+        $major_id = input('major_id','');
+        $recruit_major_id = input('recruit_major_id','');
+        $school_id = input('school_id','');
+        $recruit_score_status = input('recruit_score_status','');
+        $map = [];
+        if($major_id){
+            $map['m.major_id'] = $major_id;
+        }
+        if($school_id){
+            $map['m.school_id'] = $school_id;
+        }
+        if($recruit_major_id){
+            $map['rm.recruit_major_id'] = $recruit_major_id;
+        }
+        if($recruit_score_status != ''){
+            $map['ms.recruit_score_status'] = $recruit_score_status;
+        }
+
 		$score_list = Db::name('major_score')->alias("ms")
 						->join(config('database.prefix').'member_list m','m.member_list_id = ms.member_list_id')
 						->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
 						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
-						->where(array('ms.major_score_status' => 1))
+						->where($map)
                         ->order('ms.member_list_id desc')
 						->field('ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
@@ -178,11 +233,17 @@ class Score extends Base
 			$major_score = array_filter($major_score);
 			$data[$key]['major_score_key'] =  $major_score;
 		}
-
 		$page = $score_list->render();
+        $school_list = Db::name('school')->select();
+		$this->assign('school_list',$school_list);
 		$this->assign('data',$data);
 		$this->assign('page',$page);
-        return $this->fetch();
+        $this->assign('recruit_score_status',$recruit_score_status);
+        if(request()->isAjax()){
+            return $this->fetch('ajax_recruit_score_list');
+        }else{
+            return $this->fetch();
+        }
     }
     public function recruit_score_add()
     {
@@ -233,11 +294,47 @@ class Score extends Base
     }
 	public function recruit_score_all()
     {
+        $major_id = input('major_id','');
+        $recruit_major_id = input('recruit_major_id','');
+        $school_id = input('school_id','');
+        $major_score_status = input('major_score_status','');
+        $map = [];
+        if($major_id){
+            $map['m.major_id'] = $major_id;
+        }
+        if($school_id){
+            $map['m.school_id'] = $school_id;
+        }
+        if($recruit_major_id){
+            $map['rm.recruit_major_id'] = $recruit_major_id;
+        }
+        if($major_score_status != ''){
+            $map['ms.major_score_status'] = $major_score_status;
+        }
+        $major_id = input('major_id','');
+        $recruit_major_id = input('recruit_major_id','');
+        $school_id = input('school_id','');
+        $recruit_score_status = input('recruit_score_status','');
+        $map = ['ms.recruit_score_status' => 0];
+        if($major_id){
+            $map['m.major_id'] = $major_id;
+        }
+        if($school_id){
+            $map['m.school_id'] = $school_id;
+        }
+        if($recruit_major_id){
+            $map['rm.recruit_major_id'] = $recruit_major_id;
+        }
+        /*
+        if($recruit_score_status != ''){
+            $map['ms.recruit_score_status'] = $recruit_score_status;
+        }
+        */
 		$score_list = Db::name('major_score')->alias("ms")
 						->join(config('database.prefix').'member_list m','m.member_list_id = ms.member_list_id')
 						->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
 						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
-						->where(array('ms.recruit_score_status' => 0))
+						->where($map)
 						->field('ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
@@ -260,9 +357,16 @@ class Score extends Base
 		}
 
 		$page = $score_list->render();
+        $school_list = Db::name('school')->select();
+		$this->assign('school_list',$school_list);
 		$this->assign('data',$data);
 		$this->assign('page',$page);
-        return $this->fetch();
+        $this->assign('recruit_score_status',$recruit_score_status);
+        if(request()->isAjax()){
+            return $this->fetch('ajax_recruit_score_all');
+        }else{
+            return $this->fetch();
+        }
     }
 	public function score_active()
 	{

@@ -1,0 +1,16 @@
+{foreach name="data" item="v"}
+<tr>
+    <td height="28" >{$v.member_list_nickname}</td>
+    <td>{$v.member_list_username}</td>
+    <td>{$v.major_name}</td>
+    <td>{$v.recruit_major_name}</td>
+    <td>
+        {$v.major_score_desc}
+    </td>
+    <td><input type="text" name="recruit_score" value="{$v.recruit_score}" class="recruit_score" data-id="{$v.member_list_id}"></td>
+   <td><span class="status_{$v.member_list_id}">{$v['status_desc']}</span></td>
+</tr>
+{/foreach}
+<tr>
+    <td colspan="7" align="left">{$page}</td>
+</tr>

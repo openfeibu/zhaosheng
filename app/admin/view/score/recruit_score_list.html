@@ -1,6 +1,30 @@
 {extend name="admin@public/base" /}
 {block name="main-content"}
 	<div class="page-content">
+		<div class="row maintop">
+
+			<form name="admin_list_sea" class="form-search" id="list-filter" method="post" action="{:url('admin/score/recruit_score_list')}">
+				<div class="col-xs-12 col-sm-4  margintop5">
+
+					<select name="recruit_score_status" class="ajax_change">
+						<option value="">所有审核状态</option>
+						<option value="2" {if condition="$recruit_score_status eq '1'"}selected="selected"{/if}>未通过审核</option>
+						<option value="1" {if condition="$recruit_score_status eq '1'"}selected="selected"{/if}>已通过审核</option>
+						<option value="0" {if condition="$recruit_score_status eq '0'"}selected="selected"{/if} >审核中</option>
+					</select>
+					<select name="school_id" class="ajax_change" id="recruit_school">
+						<option value="">选择学校</option>
+						{foreach name="school_list" item="v"}
+							<option value="{$v.school_id}" >{$v.school_name}</option>
+						{/foreach}
+					</select>
+					<select name="recruit_major_id" class="ajax_change" id="recruit_major">
+						<option value="">选择高职专业</option>
+					</select>
+				</div>
+
+			</form>
+		</div>
 
 		<div class="row">
 			<div class="col-xs-12">
@@ -20,23 +44,10 @@
                                 <th>状态</th>
 							</tr>
 							</thead>
+							<tbody id="ajax-data">
+								{include file="score/ajax_recruit_score_list"/}
+							</tbody>
 
-							{foreach name="data" item="v"}
-                            <tr>
-                                <td height="28" >{$v.member_list_nickname}</td>
-                                <td>{$v.member_list_username}</td>
-                                <td>{$v.major_name}</td>
-                                <td>{$v.recruit_major_name}</td>
-                                <td>
-									{$v.major_score_desc}
-								</td>
-                                <td><input type="text" name="recruit_score" value="{$v.recruit_score}" class="recruit_score" data-id="{$v.member_list_id}"></td>
-                               <td><span class="status_{$v.member_list_id}">{$v['status_desc']}</span></td>
-                            </tr>
-							{/foreach}
-                            <tr>
-								<td colspan="7" align="left">{$page}</td>
-							</tr>
 						</table>
 					</form>
 				</div>
