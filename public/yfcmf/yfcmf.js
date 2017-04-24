@@ -235,6 +235,28 @@ $(function () {
         }, "json");
         return false;
     });
+	$('body').on('click','.member_status_btn',function () {
+        var $url =$(this).parent().attr('href'),
+            val = $(this).parent().attr('data-id'),
+            $btn=$(this);
+		console.log($url);
+        $.post($url, {x: val}, function (data) {
+            if (data.code==1) {
+				if (data.msg == '已通过') {
+                    $btn.html('审核不通过');
+					$btn.removeClass('btn-primary').addClass('btn-danger');
+					return false;
+                } else {
+					$btn.html('审核通过');
+                    $btn.removeClass('btn-danger').addClass('btn-primary');
+                    return false;
+                }
+            } else {
+                layer.alert(data.msg, {icon: 5});
+            }
+        }, "json");
+        return false;
+    });
 });
 /*************************************************************************** 所有ajaxForm提交 ********************************************************/
 /* 通用表单不带检查操作，失败不跳转 */
@@ -1085,6 +1107,7 @@ $(function(){
 			}
 		});
 	});
+
 	$(".personal_table input").blur(function(){
 		var member_list_id = $('#member_list_id').val();
       	var value  = $(this).val();
@@ -1115,3 +1138,7 @@ $(function(){
 
 	});
 });
+function member_active()
+{
+
+}

@@ -165,8 +165,8 @@ window.ShearPhoto.prototype = {
                               var MyR = SendArry.R, arg = this_.arg;
                               if (this.HTML5MAX) {
                                         var W = SendArry.IW, WW = W, H = SendArry.IH, p = W / H;
-                                        W > this.HTML5MAX ? (W = this.HTML5MAX, H = Math.round(W / p), H > this.HTML5MAX && (H = this.HTML5MAX, 
-                                        W = Math.round(H * p))) :H > this.HTML5MAX && (H = this.HTML5MAX, W = Math.round(H * p), 
+                                        W > this.HTML5MAX ? (W = this.HTML5MAX, H = Math.round(W / p), H > this.HTML5MAX && (H = this.HTML5MAX,
+                                        W = Math.round(H * p))) :H > this.HTML5MAX && (H = this.HTML5MAX, W = Math.round(H * p),
                                         W > this.HTML5MAX && (W = this.HTML5MAX, H = Math.round(W / p)));
                                         p = W / WW;
                                         if (MyR === 0) {
@@ -424,7 +424,7 @@ window.ShearPhoto.prototype = {
                                                             typeof imgUrl === "boolean" ? funone = EmptyFun :funone = imgUrlFun;
                                                             TF ? funtwo = imgWHFun :funtwo = EmptyFun;
                                                             typeof R === "boolean" ? funthree = EmptyFun :funthree = RFun;
-                                                            typeof left === "boolean" ? left = EmptyFun :(leftBorder = left + arg.Border, topBorder = top + arg.Border, 
+                                                            typeof left === "boolean" ? left = EmptyFun :(leftBorder = left + arg.Border, topBorder = top + arg.Border,
                                                             left = function(pro) {
                                                                       HTML3D.setLT(domimgi, Math.round(leftBorder * pro) + "px", Math.round(topBorder * pro) + "px");
                                                             });
@@ -1114,7 +1114,7 @@ window.ShearPhoto.prototype = {
                                         this_.DomUp(this)();
                                         return false;
                               }
-                              eveclientX = this_.eveMold[3](eve, "clientX"), eveclientY = this_.eveMold[3](eve, "clientY"), 
+                              eveclientX = this_.eveMold[3](eve, "clientX"), eveclientY = this_.eveMold[3](eve, "clientY"),
                               argform = this_.arg.form;
                               setTimeout(function() {
                                         iW = PNW * (eveclientX - disX);
@@ -1270,7 +1270,7 @@ window.ShearPhoto.prototype = {
                                         clientY = event.clientY;
                               }
                               if (eventbutton < 2 || typebutton !== "number") {
-                                        W = this_.formAllW, H = this_.formAllH, formParent = this_.formParent, formParentoffsetLeft = this_.formLeft, 
+                                        W = this_.formAllW, H = this_.formAllH, formParent = this_.formParent, formParentoffsetLeft = this_.formLeft,
                                         formParentoffsetTop = this_.formTop;
                                         switch (a) {
                                              case "BottomRight":
@@ -1366,7 +1366,7 @@ window.ShearPhoto.MINGGE = function(a) {
           function b() {
                     try {
                               var c = function() {
-                                        "complete" === document.readyState && (document.detachEvent("onreadystatechange", c), 
+                                        "complete" === document.readyState && (document.detachEvent("onreadystatechange", c),
                                         a());
                               }, d = window.frameElement;
                     } catch (e) {
@@ -1937,7 +1937,7 @@ window.ShearPhoto.frameUpImg.prototype = {
                               var files = upfile.files,type;
                               if (files) {
                                         files = files[0];
-										files.type && (type= files.type==="image/gif" ? "image/jpeg":files.type,this.config.HTML5.ImagesType = type); 
+										files.type && (type= files.type==="image/gif" ? "image/jpeg":files.type,this.config.HTML5.ImagesType = type);
 										if (files.size <= 0) {
                                                   this.DelCreateUpfile();
                                                   this.config.erro("错误：不能选择空字节文件");
@@ -1975,7 +1975,7 @@ window.ShearPhoto.frameUpImg.prototype = {
                               this_.createframe();
                               this_.FORM.submit();
 								    });
-							  
+
                     } catch (e) {
                               this.DelCreateUpfile();
                               this.config.erro("你选择了非图片类型，或 图片路径有误");
