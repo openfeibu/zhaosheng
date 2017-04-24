@@ -222,9 +222,10 @@ class Score extends Base
                         ->join(config('database.prefix').'member_info mi','m.member_list_id = mi.member_list_id')
 						->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
 						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
+                        ->join(config('database.prefix').'school s','s.school_id = m.school_id')
 						->where($map)
                         ->order('ms.member_list_id desc')
-						->field('mi.ZexamineeNumber,ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
+						->field('s.school_name,mi.ZexamineeNumber,ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
 		$data = $score_list->all();
