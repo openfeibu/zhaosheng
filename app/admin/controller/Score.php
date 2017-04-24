@@ -204,6 +204,7 @@ class Score extends Base
         $school_id = input('school_id','');
         $recruit_score_status = input('recruit_score_status','');
         $map = [];
+        /*
         if($major_id){
             $map['m.major_id'] = $major_id;
         }
@@ -212,10 +213,16 @@ class Score extends Base
         }
         if($recruit_major_id){
             $map['rm.recruit_major_id'] = $recruit_major_id;
-        }
+        }*/
         if($recruit_score_status != ''){
             $map['ms.recruit_score_status'] = $recruit_score_status;
         }
+
+        $admin=Db::name('admin')->alias("a")->join(config('database.prefix').'auth_group_access b','a.admin_id =b.uid')
+					->join(config('database.prefix').'auth_group c','b.group_id = c.id')
+					->where(array('a.admin_id'=>session('admin_auth.aid')))
+					->find();
+        $map['rm.recruit_major_id'] = $admin['recruit_major_id'];
 
 		$score_list = Db::name('major_score')->alias("ms")
 						->join(config('database.prefix').'member_list m','m.member_list_id = ms.member_list_id')
@@ -224,7 +231,8 @@ class Score extends Base
 						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
                         ->join(config('database.prefix').'school s','s.school_id = m.school_id')
 						->where($map)
-                        ->order('ms.member_list_id desc')
+                        ->order('s.school_id desc')
+                        ->order('m.member_list_id desc')
 						->field('s.school_name,mi.ZexamineeNumber,ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 

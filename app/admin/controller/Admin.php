@@ -236,7 +236,7 @@ class Admin extends Base
 	public function university_admin_runadd()
 	{
 		$major_id = null !== input('major_id') ? input('major_id') : 0;
-		$admin_id=AdminModel::add(input('admin_username'),'',input('admin_pwd'),input('admin_email',''),input('admin_tel',''),input('admin_open',0),input('admin_realname',''),4,input('school_id','0'),$major_id);
+		$admin_id=AdminModel::add(input('admin_username'),'',input('admin_pwd'),input('admin_email',''),input('admin_tel',''),input('admin_open',0),input('admin_realname',''),4,input('school_id','0'),$major_id,input('recruit_major_id',0));
 		if($admin_id){
 			$this->success('添加成功',url('admin/Admin/university_admin_list'));
 		}else{
