@@ -167,7 +167,7 @@ class Admin extends Model
         $admin['admin_tel']= isset($data['admin_tel']) ? $data['admin_tel'] : '';
         $admin['admin_realname']= isset($data['admin_realname']) ? $data['admin_tel'] : '';
         $admin['admin_open']=$data['admin_open'];
-		$admin['school_id']=$data['school_id'];
+		$admin['school_id']= $data['school_id'];
 		$admin['major_id']= isset($data['major_id']) ? $data['major_id'] : 0;
         if($data['admin_pwd']){
             $admin['admin_pwd_salt']=random(10);

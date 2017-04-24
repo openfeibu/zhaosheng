@@ -312,11 +312,11 @@ class Member extends Base
 		if($status==1){
 			$statedata = array('user_status'=>0);
 			$member_model->where(array('member_list_id'=>$id))->setField($statedata);
-			$this->success('未激活');
+			$this->success('未通过');
 		}else{
 			$statedata = array('user_status'=>1);
 			$member_model->where(array('member_list_id'=>$id))->setField($statedata);
-			$this->success('已激活');
+			$this->success('已通过');
 		}
 	}
 

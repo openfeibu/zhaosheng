@@ -22,26 +22,36 @@ class Admin extends Base
 	public function admin_list()
 	{
 		$search_name=input('search_name');
+		$group_id = input('group_id','');
 		$this->assign('search_name',$search_name);
 		$map=array();
 		if($search_name){
 			$map['admin_username']= array('like',"%".$search_name."%");
 		}
-		$admin_list=Db::name('admin')->where($map)->order('admin_id')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
+		if($group_id){
+			$map['aga.group_id'] = 4;
+		}
+		$admin_list=Db::name('admin')->alias('a')
+							->join(config('database.prefix').'auth_group_access aga','aga.uid = a.admin_id')
+							->where($map)->order('a.admin_id')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 		$page = $admin_list->render();
+		$this->assign('group_id',$group_id);
 		$this->assign('admin_list',$admin_list);
 		$this->assign('page',$page);
 		return $this->fetch();
 	}
+
 	/**
 	 * 管理员添加
 	 */
 	public function admin_add()
 	{
+		$group_id = input('group_id','');
 		$school_list = Db::name('school')->select();
 		$auth_group=Db::name('auth_group')->select();
 		$this->assign('school_list',$school_list);
 		$this->assign('auth_group',$auth_group);
+		$this->assign('group_id',$group_id);
 		return $this->fetch();
 	}
 	/**
@@ -110,6 +120,174 @@ class Admin extends Base
 			$this->error('管理员删除失败',url('admin/Admin/admin_list'));
 		}
 	}
+	public function secondary_vocat_admin_list()
+	{
+		$search_name=input('search_name');
+		$this->assign('search_name',$search_name);
+		$map=array();
+		$map['aga.group_id'] = 3;
+		if($search_name){
+			$map['a.admin_username']= array('like',"%".$search_name."%");
+		}
+		$admin_list=Db::name('admin')->alias('a')
+							->join(config('database.prefix').'auth_group_access aga','aga.uid = a.admin_id')
+							->where($map)->order('a.admin_id')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
+		$page = $admin_list->render();
+		$this->assign('group_id',4);
+		$this->assign('admin_list',$admin_list);
+		$this->assign('page',$page);
+		return $this->fetch();
+	}
+	public function secondary_vocat_admin_add()
+	{
+		$group_id = 3;
+		$school_list = Db::name('school')->select();
+		$auth_group=Db::name('auth_group')->select();
+		$this->assign('school_list',$school_list);
+		$this->assign('auth_group',$auth_group);
+		$this->assign('group_id',$group_id);
+		return $this->fetch();
+	}
+	public function secondary_vocat_admin_runadd()
+	{
+		$major_id = null !== input('major_id') ? input('major_id') : 0;
+		$admin_id=AdminModel::add(input('admin_username'),'',input('admin_pwd'),input('admin_email',''),input('admin_tel',''),input('admin_open',0),input('admin_realname',''),3,input('school_id','0'),$major_id);
+		if($admin_id){
+			$this->success('添加成功',url('admin/Admin/secondary_vocat_admin_list'));
+		}else{
+			$this->error('添加失败',url('admin/Admin/secondary_vocat_admin_list'));
+		}
+	}
+	public function secondary_vocat_admin_edit()
+	{
+		$auth_group=Db::name('auth_group')->select();
+		$admin_list=Db::name('admin')->find(input('admin_id'));
+		$auth_group_access=Db::name('auth_group_access')->where(array('uid'=>$admin_list['admin_id']))->value('group_id');
+		$school_list = Db::name('school')->select();
+		$major_list = Db::name('major')->where(array('school_id' => $admin_list['school_id']))->select();
+		$this->assign('school_list',$school_list);
+		$this->assign('major_list',$major_list);
+		$this->assign('admin_list',$admin_list);
+		$this->assign('auth_group',$auth_group);
+		$this->assign('auth_group_access',$auth_group_access);
+		return $this->fetch();
+	}
+	public function secondary_vocat_admin_runedit()
+	{
+		$data=input('post.');
+		$data['group_id'] = 3;
+		$rst=AdminModel::edit($data);
+		if($rst!==false){
+			$this->success('修改成功',url('admin/Admin/secondary_vocat_admin_list'));
+		}else{
+			$this->error('修改失败',url('admin/Admin/secondary_vocat_admin_list'));
+		}
+	}
+	public function secondary_vocat_admin_del()
+	{
+		$admin_id=input('admin_id');
+		if (empty($admin_id)){
+			$this->error('用户ID不存在',url('admin/Admin/admin_list'));
+		}
+		//对应会员ID
+		$member_id=Db::name('admin')->where('admin_id',$admin_id)->value('member_id');
+		Db::name('admin')->delete($admin_id);
+		//删除对应会员
+		if($member_id){
+			Db::name('member_list')->delete($member_id);
+		}
+		$rst=Db::name('auth_group_access')->where('uid',$admin_id)->delete();
+		if($rst!==false){
+			$this->success('删除成功',url('admin/Admin/secondary_vocat_admin_list'));
+		}else{
+			$this->error('删除失败',url('admin/Admin/secondary_vocat_admin_list'));
+		}
+	}
+
+	public function university_admin_list()
+	{
+		$search_name=input('search_name');
+		$this->assign('search_name',$search_name);
+		$map=array();
+		$map['aga.group_id'] = 4;
+		if($search_name){
+			$map['a.admin_username']= array('like',"%".$search_name."%");
+		}
+		$admin_list=Db::name('admin')->alias('a')
+							->join(config('database.prefix').'auth_group_access aga','aga.uid = a.admin_id')
+							->where($map)->order('a.admin_id')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
+		$page = $admin_list->render();
+		$this->assign('group_id',4);
+		$this->assign('admin_list',$admin_list);
+		$this->assign('page',$page);
+		return $this->fetch();
+	}
+	public function university_admin_add()
+	{
+		$group_id = 4;
+		$school_list = Db::name('school')->select();
+		$auth_group=Db::name('auth_group')->select();
+		$this->assign('school_list',$school_list);
+		$this->assign('group_id',$group_id);
+		return $this->fetch();
+	}
+	public function university_admin_runadd()
+	{
+		$major_id = null !== input('major_id') ? input('major_id') : 0;
+		$admin_id=AdminModel::add(input('admin_username'),'',input('admin_pwd'),input('admin_email',''),input('admin_tel',''),input('admin_open',0),input('admin_realname',''),4,input('school_id','0'),$major_id);
+		if($admin_id){
+			$this->success('添加成功',url('admin/Admin/university_admin_list'));
+		}else{
+			$this->error('添加失败',url('admin/Admin/university_admin_list'));
+		}
+	}
+	public function university_admin_edit()
+	{
+		$auth_group=Db::name('auth_group')->select();
+		$admin_list=Db::name('admin')->find(input('admin_id'));
+		$auth_group_access=Db::name('auth_group_access')->where(array('uid'=>$admin_list['admin_id']))->value('group_id');
+		$school_list = Db::name('school')->select();
+		$major_list = Db::name('major')->where(array('major_id' => $admin_list['major_id']))->select();
+		$this->assign('school_list',$school_list);
+		$this->assign('major_list',$major_list);
+		$this->assign('admin_list',$admin_list);
+		$this->assign('auth_group',$auth_group);
+		$this->assign('auth_group_access',$auth_group_access);
+		return $this->fetch();
+	}
+
+	public function university_admin_runedit()
+	{
+		$data=input('post.');
+		$data['group_id'] = 4;
+		$rst=AdminModel::edit($data);
+		if($rst!==false){
+			$this->success('修改成功',url('admin/Admin/university_admin_list'));
+		}else{
+			$this->error('修改失败',url('admin/Admin/university_admin_list'));
+		}
+	}
+	public function university_admin_del()
+	{
+		$admin_id=input('admin_id');
+		if (empty($admin_id)){
+			$this->error('用户ID不存在',url('admin/Admin/admin_list'));
+		}
+		//对应会员ID
+		$member_id=Db::name('admin')->where('admin_id',$admin_id)->value('member_id');
+		Db::name('admin')->delete($admin_id);
+		//删除对应会员
+		if($member_id){
+			Db::name('member_list')->delete($member_id);
+		}
+		$rst=Db::name('auth_group_access')->where('uid',$admin_id)->delete();
+		if($rst!==false){
+			$this->success('删除成功',url('admin/Admin/university_admin_list'));
+		}else{
+			$this->error('删除失败',url('admin/Admin/university_admin_list'));
+		}
+	}
+
 	/**
 	 * 管理员开启/禁止
 	 */

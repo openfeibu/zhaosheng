@@ -1,7 +1,8 @@
 {extend name="admin@public/base" /}
 {block name="main-content"}
 <style>
-.personal_table{background: #fff;}
+.personal_table{background: #fff;margin: 0 auto;width: 656px;}
+
 .personal_table table input{width: 100%;height: 100%;border:none;outline:none;text-align: center;color: #666;}
 .line-table-height{
     height:30px;
@@ -145,14 +146,14 @@
 					</div>
 					<div class="space-4"></div> -->
 
-					<div class="form-group">
+					<!-- <div class="form-group">
 						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 审核： </label>
 						<div class="col-sm-10" style="padding-top:5px;">
 							<input name="user_status" {if condition='$member_list_edit.user_status eq 1'}checked{/if} id="user_status" value="1" class="ace ace-switch ace-switch-4 btn-flat" type="checkbox" />
 							<span class="lbl">&nbsp;&nbsp;默认未通过</span>
 						</div>
 					</div>
-					<div class="space-4"></div>
+					<div class="space-4"></div>-->
 
 					<div class="clearfix form-actions">
 						<div class="col-md-offset-3 col-md-9">
@@ -446,7 +447,23 @@
 			</table>
 			</div>
 			</div>
+
 		</div>
+        <div class="clearfix form-actions">
+            <div class="col-md-offset-5 col-md-9"  href="{:url('admin/Member/member_active')}" data-id="{$member_list_edit.member_list_id}">
+                {if condition='$member_list_edit.user_status eq 1'}
+                <button class="btn btn-info btn-danger member_status_btn" type="button">
+                    审核不通过
+                </button>
+                {else}
+                <button class="btn btn-info btn-primary member_status_btn" type="button">
+                    审核通过
+                </button>
+                {/if}
+
+
+            </div>
+        </div>
 	</div><!-- /.page-content -->
 
 

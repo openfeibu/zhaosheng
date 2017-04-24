@@ -75,7 +75,7 @@ class School extends Base
 		$data_member = Db::name('member_list')->where(array('school_id' => $school_id))->find();
 		if($data_admin || $data_member)
 		{
-			$this->error('删除失败,请先删除该专业下的中职管理员及用户',url('admin/School/major_list', array('p' => $p)));
+			$this->error('删除失败,请先删除该学院下的中职管理员及用户',url('admin/School/major_list', array('p' => $p)));
 		}
 		$rst=Db::name('school')->where(array('school_id'=>$school_id))->delete();
 		if($rst!==false){
@@ -357,4 +357,22 @@ class School extends Base
 			];
 		}
 	}
+	public function ajax_major(){
+		if (!request()->isAjax()){
+			$this->error('提交方式不正确');
+		}else{
+			$school_id = input('school_id','0');
+			$major_list = Db::name('major')->where(array('school_id' => $school_id))->select();
+			$html = '<option value="">请选择专业</option>';
+			foreach($major_list as $key => $major)
+			{
+				$html .= "<option value='".$major['major_id']."'>".$major['major_name']."</option>";
+			}
+			return [
+				'code' => 200,
+				'html' => $html,
+			];
+		}
+	}
+
 }
