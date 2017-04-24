@@ -65,7 +65,7 @@ class School extends Base
 			$this->error('不存在中职学校',url('admin/School/major_list'));
 		}
 		$srt = Db::name('school')->where(array('school_id' => $school_id))->update(array('school_name' => input('school_name')));
-		$this->success('更新成功');
+		$this->success('更新成功',url('admin/School/school_list'));
 	}
 	public function school_del()
 	{
