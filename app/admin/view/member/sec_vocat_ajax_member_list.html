@@ -8,12 +8,9 @@
 		</td>-->
 		<td><a class="green"  href="{:url('admin/Member/member_edit',array('member_list_id'=>$v['member_list_id']))}" title="修改">{$v.member_list_nickname}</a></td>
 		<td>{$v.member_list_username}</td>
-		{foreach name="$v['major_score_arr']" item="val"}
-		<th>{$val}</th>
-		{/foreach}
-		<td>{$v.major_score_total}</td>
-		<td>{$v.recruit_score}</td>
-		<td>{$v.total_score}</td>
+		<td>{$v.major_name}</td>
+		<td>{$v.major_code}</td>
+
 		<!-- <td class="hidden-xs">
 			{if condition='$v.member_list_open eq 1'}
 				<a class="red open-btn" href="{:url('admin/Member/member_state')}" data-id="{$v.member_list_id}" title="已开启">

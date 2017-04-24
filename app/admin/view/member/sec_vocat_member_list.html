@@ -18,6 +18,7 @@
 						<option value="1" {if condition="$opentype_check eq '1'"}selected="selected"{/if}>开启</option>
 						<option value="0" {if condition="$opentype_check eq '0'"}selected="selected"{/if} >禁用</option>
 					</select> -->
+					按状态筛选：
 					<select name="activetype_check" class="ajax_change">
 						<option value="">所有学生</option>
 						<option value="1" {if condition="$activetype_check eq '1'"}selected="selected"{/if}>已通过审核</option>
@@ -67,12 +68,8 @@
 							</th>-->
 							<th>姓名</th>
 							<th>身份证</th>
-							{foreach name='major_score_key' item="v"}
-							<th>{$v}</th>
-							{/foreach}
-							<th>核定理论成绩</th>
-							<th>技能考核成绩</th>
-							<th>总分</th>
+							<th>中职专业名称</th>
+							<th>中职专业代码</th>
 							<th class="hidden-xs">审核</th>
 							<th style="border-right:#CCC solid 1px;">操作</th>
 						</tr>
