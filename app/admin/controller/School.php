@@ -87,39 +87,35 @@ class School extends Base
 	}
 	public function major_add()
 	{
-		$school_id = input('school_id','0');
-		$school = Db::name('school')->where(array('school_id' => $school_id))->find();
-		if(!$school)
-		{
-			$this->error('不存在中职学校',url('admin/School/major_list'));
-		}
-		$this->assign('school',$school);
 		$recruit_major_list = Db::name('recruit_major')->select();
 		$this->assign('recruit_major_list',$recruit_major_list);
+		$school_list = Db::name('school')->select();
+		$this->assign('school_list',$school_list);
 		return $this->fetch();
 	}
 	public function major_list()
 	{
 		$school_id = input('school_id','0');
+		/*
 		$school = Db::name('school')->where(array('school_id' => $school_id))->find();
 		if(!$school)
 		{
 			$this->error('不存在中职学校',url('admin/School/school_list'));
-		}
+		}*/
 		$search_name = input('search_name');
 		$map=array();
-		if($search_name){
-			$map['m.major_name']= array('like',"%".$search_name."%");
-		}
+
 		if($school_id)
 		{
-			$map['m.school_id']= array('like',"%".$school_id."%");
+			$map['m.school_id']= $school_id;
 		}
 
 		$major_list = Db::name('major')->alias('m')
+					->join(config('database.prefix').'school s','s.school_id = m.school_id')
 					->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = m.recruit_major_id')
 					->where($map)
-					->order('major_id')
+					->order('s.school_id','DESC')
+					->order('m.major_id','DESC')
 					->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
 		$data = $major_list->all();
@@ -130,9 +126,14 @@ class School extends Base
 		$page = $major_list->render();
 		$this->assign('major_list',$data);
 		$this->assign('page',$page);
-		$this->assign('school',$school);
 		$this->assign('search_name',$search_name);
-		return $this->fetch();
+		$school_list = Db::name('school')->select();
+		$this->assign('school_list',$school_list);
+		if(request()->isAjax()){
+            return $this->fetch('ajax_major_list');
+        }else{
+            return $this->fetch();
+        }
 	}
 
 	public function secondary_vocat_major_edit()
@@ -208,7 +209,7 @@ class School extends Base
 			'number' => input('number'),
 		];
 		MajorModel::create($data);
-		$this->success('添加成功',url('admin/School/major_list',array('school_id' => $school_id)));
+		$this->success('添加成功',url('admin/School/major_list'));
 	}
 	public function major_runedit()
 	{

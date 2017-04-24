@@ -10,14 +10,26 @@
 				您当前操作
 				<small>
 					<i class="ace-icon fa fa-angle-double-right"></i>
-					添加中职（{$school.school_name}）专业
+					添加中职专业
 				</small>
 			</h1>
 		</div>
 		<div class="row">
 			<div class="col-xs-12">
 				<form class="form-horizontal ajaxForm" name="school_list_add" method="post" action="{:url('admin/School/major_runadd')}">
-					<input type="hidden" name='school_id' value="{$school.school_id}">
+					<div class="form-group">
+						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 可报考高职专业： </label>
+						<div class="col-sm-10">
+							<select name="school_id" class="col-sm-4 selector" required>
+								<option value="">请选择中职学校：</option>
+								{foreach name="school_list" item="v"}
+									<option value='{$v.school_id}'>{$v.school_name}</option>
+								{/foreach}
+							</select>
+						</div>
+					</div>
+					<div class="space-4"></div>
+
 					<div class="form-group">
 						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 专业名称： </label>
 						<div class="col-sm-10">
@@ -40,7 +52,7 @@
 					</div>
 					<div class="space-4"></div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 可报考高职专业： </label>
+						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 高职专业： </label>
 						<div class="col-sm-10">
 							<select name="recruit_major_id" class="col-sm-4 selector" required>
 								<option value="">请选择可报考高职专业：</option>
