@@ -229,6 +229,8 @@ class Admin extends Base
 		$auth_group=Db::name('auth_group')->select();
 		$this->assign('school_list',$school_list);
 		$this->assign('group_id',$group_id);
+		$recruit_major_list = Db::name('recruit_major')->select();
+		$this->assign('recruit_major_list',$recruit_major_list);
 		return $this->fetch();
 	}
 	public function university_admin_runadd()
@@ -253,6 +255,8 @@ class Admin extends Base
 		$this->assign('admin_list',$admin_list);
 		$this->assign('auth_group',$auth_group);
 		$this->assign('auth_group_access',$auth_group_access);
+		$recruit_major_list = Db::name('recruit_major')->select();
+		$this->assign('recruit_major_list',$recruit_major_list);
 		return $this->fetch();
 	}
 

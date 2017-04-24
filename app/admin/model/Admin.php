@@ -118,7 +118,7 @@ class Admin extends Model
     /**
      * 增加管理员
      */
-    public static function add($admin_username,$admin_pwd_salt='',$admin_pwd,$admin_email='',$admin_tel='',$admin_open=0,$admin_realname='',$group_id=1,$school_id=0)
+    public static function add($admin_username,$admin_pwd_salt='',$admin_pwd,$admin_email='',$admin_tel='',$admin_open=0,$admin_realname='',$group_id=1,$school_id=0,$major_id=0,$recruit_major_id=0)
     {
         $admin_pwd_salt=$admin_pwd_salt?:random(10);
         $sldata=array(
@@ -132,7 +132,9 @@ class Admin extends Model
             'admin_ip'=>request()->ip(),
             'admin_addtime'=>time(),
             'admin_changepwd'=>time(),
-			'school_id' => $school_id
+			'school_id' => $school_id,
+            'major_id' => $major_id,
+            'recruit_major_id' => $recruit_major_id
         );
         $admin=self::create($sldata);
         if($admin){
@@ -167,7 +169,8 @@ class Admin extends Model
         $admin['admin_tel']= isset($data['admin_tel']) ? $data['admin_tel'] : '';
         $admin['admin_realname']= isset($data['admin_realname']) ? $data['admin_tel'] : '';
         $admin['admin_open']=$data['admin_open'];
-		$admin['school_id']= $data['school_id'];
+		$admin['school_id']= isset($data['school_id']) ? $data['school_id'] : 0;
+        $admin['recruit_major_id'] = isset($data['recruit_major_id']) ? $data['recruit_major_id'] : 0;
 		$admin['major_id']= isset($data['major_id']) ? $data['major_id'] : 0;
         if($data['admin_pwd']){
             $admin['admin_pwd_salt']=random(10);
