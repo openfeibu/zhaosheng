@@ -204,7 +204,8 @@ class School extends Base
 			'school_id'	 => $school_id,
 			'recruit_major_id' => input('recruit_major_id'),
 			'major_code' => input('major_code'),
-			'score' => json_encode($score)
+			'score' => json_encode($score),
+			'number' => input('number'),
 		];
 		MajorModel::create($data);
 		$this->success('添加成功',url('admin/School/major_list',array('school_id' => $school_id)));
@@ -223,6 +224,7 @@ class School extends Base
 			'score' => json_encode($score),
 			'major_code' => input('major_code'),
 			'recruit_major_id' => input('recruit_major_id'),
+			'number' => input('number'),
 		];
 		$rst = Db::name('major')->where(array('major_id' => $major['major_id']))->update($data);
 		if($rst!==false){
@@ -374,5 +376,60 @@ class School extends Base
 			];
 		}
 	}
+	public function enrollment()
+	{
+		$majors = Db::name('major')->alias('mj')
+							->join(config('database.prefix').'recruit_major rm','mj.recruit_major_id = rm.recruit_major_id')
+							->join(config('database.prefix').'school s','mj.school_id = s.school_id')
+							->order('mj.school_id')
+							->select();
+		$this->assign('majors',$majors);
+		return $this->fetch();
+	}
+	public function export_enrollment()
+	{
+		$data = Db::name('major')->alias('mj')
+							->join(config('database.prefix').'recruit_major rm','mj.recruit_major_id = rm.recruit_major_id')
+							->join(config('database.prefix').'school s','mj.school_id = s.school_id')
+							->order('mj.school_id')
+							->select();
+        $field_titles = ['中职学校','中职专业','中职专业代码','高职专业','高职专业代码','招生计划数'];
+        $fields = ['school_name','major_name','major_code','recruit_major_name','recruit_major_code','number'];
+        $table = '招生计划表'.date('YmdHis');
+        error_reporting(E_ALL);
+        date_default_timezone_set('Asia/chongqing');
+        $objPHPExcel = new \PHPExcel();
+        //import("Org.Util.PHPExcel.Reader.Excel5");
+        /*设置excel的属性*/
+        $objPHPExcel->getProperties()->setCreator("wuzhijie")//创建人
+        ->setLastModifiedBy("wuzhijie")//最后修改人
+        ->setKeywords("excel")//关键字
+        ->setCategory("result file");//种类
 
+        //第一行数据
+        $objPHPExcel->setActiveSheetIndex(0);
+        $active = $objPHPExcel->getActiveSheet();
+        foreach($field_titles as $i=>$name){
+            $ck = num2alpha($i++) . '1';
+            $active->setCellValue($ck, $name);
+        }
+        //填充数据
+        foreach($data as $k => $v){
+            $k=$k+1;
+            $num=$k+1;//数据从第二行开始录入
+            $objPHPExcel->setActiveSheetIndex(0);
+            foreach($fields as $i=>$name){
+                $ck = num2alpha($i++) . $num;
+                $active->setCellValue($ck, $v[$name]);
+            }
+        }
+        $objPHPExcel->getActiveSheet()->setTitle($table);
+        $objPHPExcel->setActiveSheetIndex(0);
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$table.'.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter->save('php://output');
+        exit;
+	}
 }
