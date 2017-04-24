@@ -342,7 +342,7 @@ class Score extends Base
         $recruit_major_id = input('recruit_major_id','');
         $school_id = input('school_id','');
         $recruit_score_status = input('recruit_score_status','');
-        $map = ['ms.recruit_score_status' => 0];
+    //    $map = ['ms.recruit_score_status' => 0];
         if($major_id){
             $map['m.major_id'] = $major_id;
         }
@@ -352,18 +352,22 @@ class Score extends Base
         if($recruit_major_id){
             $map['rm.recruit_major_id'] = $recruit_major_id;
         }
-        /*
+
         if($recruit_score_status != ''){
             $map['ms.recruit_score_status'] = $recruit_score_status;
         }
-        */
+
 		$score_list = Db::name('major_score')->alias("ms")
 						->join(config('database.prefix').'member_list m','m.member_list_id = ms.member_list_id')
                         ->join(config('database.prefix').'member_info mi','m.member_list_id = mi.member_list_id')
 						->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
 						->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = mj.recruit_major_id')
+                        ->join(config('database.prefix').'school s','s.school_id = m.school_id')
 						->where($map)
-						->field('mi.ZexamineeNumber,ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
+                        ->where('ms.recruit_score is not null')
+                        ->order('ms.recruit_score_status','ASC')
+                        ->order('ms.major_score_id','DESC')
+						->field('s.school_name,mi.ZexamineeNumber,ms.major_score, ms.major_score_status,ms.recruit_score,ms.recruit_score_status,m.member_list_nickname,m.member_list_username, m.member_list_id,m.major_id,ms.major_score_id,mj.major_name,rm.recruit_major_name,mj.score as major_score_key')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
 
 		$data = $score_list->all();
