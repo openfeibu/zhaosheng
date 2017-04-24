@@ -139,6 +139,10 @@ class Score extends Base
         $major_score_data = Db::name('major_score')->where(array('member_list_id' => $member_list_id))->find();
         if($major_score_data)
         {
+            if($major_score_data['major_score_status'] == 1)
+            {
+                $this->error('提交失败。已审核通过不能重复提交');
+            }
             $data = [
                 'major_score' => $major_score,
                 'major_score_status' => 0,
