@@ -16,7 +16,6 @@
                                 <th>{$v} </th>
                                 {/foreach}
                                 <th>状态</th>
-								<th>操作</th>
 							</tr>
 							</thead>
 							{foreach name="data" item="v"}
@@ -28,7 +27,7 @@
                                 {/foreach}
                                 </td>
                                 <td>{$v['status_desc']}</td>
-								<td>
+								<!-- <td>
 									<div class="hidden-sm hidden-xs action-buttons">
 										<a class="green" href="{:url('admin/score/score_add',array('member_list_id'=>$v['member_list_id']))}" title="修改">
 											<i class="ace-icon fa fa-pencil bigger-130"></i>
@@ -37,11 +36,11 @@
 											<i class="ace-icon fa fa-trash-o bigger-130"></i>
 										</a>
 									</div>
-								</td>
+								</td> -->
                             </tr>
 							{/foreach}
                             <tr>
-								<td height="50" colspan="7" align="center">{$page}</td>
+								<td height="50" colspan="20" align="center">{$page}</td>
 							</tr>
 						</table>
 					</form>
