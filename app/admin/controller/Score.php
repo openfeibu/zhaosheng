@@ -45,7 +45,7 @@ class Score extends Base
             $major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
             $data[$key]['major_score_arr'] = $major_score_arr;
             $data[$key]['major_score_desc'] = $major_score_desc;
-			$data[$key]['status_desc'] = $val['major_score_status'] == 2 ? "<span class='red'>" . $status[$val['major_score_status']] ."</span>" : $status[$val['major_score_status']];
+			$data[$key]['status_desc'] = $status[$val['major_score_status']] ;
             $major_score_total = handle_major_score($major_score_arr);
             $data[$key]['major_score_total'] = $major_score_total;
 		}
@@ -97,7 +97,7 @@ class Score extends Base
             $major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
             $data[$key]['major_score_arr'] = $major_score_arr;
             $data[$key]['major_score_desc'] = $major_score_desc;
-			$data[$key]['status_desc'] = $val['major_score_status'] == 2 ? "<span class='red'>" . $status[$val['major_score_status']] ."</span>" : $status[$val['major_score_status']];
+			$data[$key]['status_desc'] = $status[$val['major_score_status']] ;
 			$major = Db::name('major')->where(array('major_id' => $val['major_id']))->find();
 			$major_score = json_decode($major['score'],true);
 			$major_score = array_filter($major_score);
@@ -238,7 +238,7 @@ class Score extends Base
             $major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
             $data[$key]['major_score_arr'] = $major_score_arr;
             $data[$key]['major_score_desc'] = $major_score_desc;
-			$data[$key]['status_desc'] = $val['recruit_score_status'] == 2 ? "<span class='red'>".$status[$val['recruit_score_status']].'</span>' : $status[$val['recruit_score_status']];
+			$data[$key]['status_desc'] = $status[$val['recruit_score_status']];
 			$major = Db::name('major')->where(array('major_id' => $val['major_id']))->find();
 			$major_score = json_decode($major['score'],true);
 			$major_score = array_filter($major_score);
@@ -368,7 +368,7 @@ class Score extends Base
             $major_score_arr = handle_major_score_arr($major_score_key,$major_score_arr);
             $data[$key]['major_score_arr'] = $major_score_arr;
             $data[$key]['major_score_desc'] = $major_score_desc;
-			$data[$key]['status_desc'] = $val['recruit_score_status'] == 2 ? "<span class='red'>".$status[$val['recruit_score_status']].'</span>' : $status[$val['recruit_score_status']];
+			$data[$key]['status_desc'] = $status[$val['recruit_score_status']];
 			$major = Db::name('major')->where(array('major_id' => $val['major_id']))->find();
 			$major_score = json_decode($major['score'],true);
 			$major_score = array_filter($major_score);
