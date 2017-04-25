@@ -59,7 +59,7 @@
 							</select>
 							{foreach name="$majors" item="val"}
 
-								<select name="major_id[]"  class="col-sm-5 major_more" style="width:20%;"  required>
+								<select name="major_id[]"  class="col-sm-5 major_more" style="width:20%;margin-right:10px"  required>
 										{foreach name="major_list" item='v'}
 										<option value="{$v.major_id}" {if condition="$v['major_id'] eq $val['major_id']"}selected{/if} >{$v.major_name}</option>
 										{/foreach}
