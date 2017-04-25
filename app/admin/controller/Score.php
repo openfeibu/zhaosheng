@@ -26,18 +26,8 @@ class Score extends Base
 					->find();
 
         $major_list = [];
-		$school_ids = json_decode($admin['school_id'],true);
-		$major_ids = json_decode($admin['major_id'],true);
-		$school_major_arr = [];
-		foreach($major_ids as $k => $major_id)
-		{
-			$school_major_arr[$major_id] = $school_ids[$k];
-		}
-		foreach ($school_ids as $key => $school_id) {
-			$major_list[$school_id] = Db::name('major')->where(array('school_id' => $school_id))->select();
-		}
-		$this->assign('school_major_arr',$school_major_arr);
-		$school_list = Db::name('school')->where(['school_id' => array('in',$school_ids)])->select();
+
+
 
         $major_id = input('major_id',0);
         $school_id = input('school_id','');
@@ -82,8 +72,9 @@ class Score extends Base
     		$major_score = array_filter($major_score);
     		$this->assign('major_score',$major_score);
         }
-
-        $this->assign('school_list',$school_list);
+        $major_ids = json_decode($admin['major_id'],true);
+        $major_list = Db::name('major')->where(array('major_id' => array('in',$major_ids)))->select();
+        $this->assign('major_list',$major_list);
 		$this->assign('data',$data);
 		$this->assign('page',$page);
         if(request()->isAjax()){

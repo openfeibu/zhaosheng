@@ -5,14 +5,12 @@
 
 			<form name="admin_list_sea" class="form-search" id="list-filter" method="post" action="{:url('admin/score/score_list')}">
 				<div class="col-xs-12 col-sm-4  margintop5">
-					<select name="school_id" class="" id="secondary_vocat_school">
-						<option value="">选择中职学校</option>
-						{foreach name="school_list" item="v"}
-							<option value="{$v.school_id}" >{$v.school_name}</option>
-						{/foreach}
-					</select>
+
 					<select name="major_id" class="ajax_change" id="major">
 						<option value="">选择中职专业</option>
+						{foreach name='major_list' item='v'}
+						<option value="{$v.major_id}">{$v.major_name}</option>
+						{/foreach}
 					</select>
 				</div>
 

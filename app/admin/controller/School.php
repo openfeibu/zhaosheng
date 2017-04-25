@@ -140,7 +140,7 @@ class School extends Base
 					->join(config('database.prefix').'auth_group c','b.group_id = c.id')
 					->where(array('a.admin_id'=>session('admin_auth.aid')))
 					->find();
-		$school_ids = json_decode($admin['school_id'],true);
+		$school_id = $admin['school_id'];
 		$major_ids = json_decode($admin['major_id'],true);
 		$school_major_arr = $major_list = [];
 

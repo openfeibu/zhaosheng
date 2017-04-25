@@ -42,7 +42,18 @@ class Base extends Common
 		}
 		$this->admin = $admin;
 		$this->assign('admin', $admin);
-
+		$head_title = '';
+		if($admin['recruit_major_id'])
+		{
+			$recruit_major = Db::name('recruit_major')->where(['recruit_major_id' => $admin['recruit_major_id']])->find();
+			$head_title = $recruit_major['recruit_major_name'];
+		}
+		if($admin['school_id'])
+		{
+			$school = Db::name('school')->where(['school_id' => $admin['school_id']])->find();
+			$head_title = $school['school_name'];
+		}
+		$this->assign('head_title', $head_title);
 		$this->assign('admin_avatar',session('admin_auth.admin_avatar'));
 	}
 }

@@ -54,11 +54,25 @@
 					</div>
 					<div class="space-4"></div>
 
-
+					{if $admin['major_id']}
+					<input name="school_id"  value="{$admin['school_id']}" type="hidden"/>
+					<div class="form-group">
+						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 所属中职专业: </label>
+						<div class="col-sm-10">
+							<select name="major_id"  class="col-sm-5" id="major" required>
+								<option value="">请选择所属中职专业</option>
+								{foreach name='major_list' item='v'}
+								<option value="{$v.major_id}">{$v.major_name}</option>
+								{/foreach}
+							</select>
+						</div>
+					</div>
+					<div class="space-4"></div>
+					{else}
 					<div class="form-group">
 						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 所属中职：  </label>
 						<div class="col-sm-10">
-							<select name="school_id"  class="col-sm-5" {if $admin['major_id']}id="secondary_vocat_school"{else}id="school"{/if} required>
+							<select name="school_id"  class="col-sm-5" id="school" required>
 								<option value="">请选择所属中职</option>
 								{foreach name="school_list" item="v"}
 									<option value="{$v.school_id}">{$v.school_name}</option>
@@ -73,11 +87,14 @@
 						<div class="col-sm-10">
 							<select name="major_id"  class="col-sm-5" id="major" required>
 								<option value="">请选择所属中职专业</option>
+								{foreach name='major_list' item='v'}
+								<option value="{$v.major_id}">{$v.major_name}</option>
+								{/foreach}
 							</select>
 						</div>
 					</div>
 					<div class="space-4"></div>
-
+					{/if}
 					<!-- <div class="form-group">
 						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 是否开启（禁止后用户将不能登录）： </label>
 						<div class="col-sm-10" style="padding-top:5px;">

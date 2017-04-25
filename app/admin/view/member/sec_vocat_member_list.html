@@ -24,14 +24,12 @@
 						<option value="1" {if condition="$activetype_check eq '1'"}selected="selected"{/if}>已通过审核</option>
 						<option value="0" {if condition="$activetype_check eq '0'"}selected="selected"{/if} >未通过审核</option>
 					</select>
-					<select name="school_id" class="ajax_change" id="secondary_vocat_school">
-						<option value="">选择学校</option>
-						{foreach name="school_list" item="v"}
-							<option value="{$v.school_id}" >{$v.school_name}</option>
-						{/foreach}
-					</select>
+
 					<select name="major_id" class="ajax_change" id="major">
 						<option value="">选择专业</option>
+						{foreach name='major_list' item='v'}
+						<option value="{$v.major_id}">{$v.major_name}</option>
+						{/foreach}
 
 					</select>
 				</div>

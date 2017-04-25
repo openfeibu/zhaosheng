@@ -27,6 +27,8 @@ class Member extends Base
 		{
 			$major_ids = json_decode($this->admin['major_id'],true);
 			$where['a.major_id'] = array('in',$major_ids);
+			$major_list = Db::name('major')->where(array('major_id' => array('in',$major_ids)))->select();
+			$this->assign('major_list',$major_list);
 		}
 		if($opentype_check !== ''){
 			$where['member_list_open']=$opentype_check;
@@ -80,13 +82,9 @@ class Member extends Base
 			$major_score_key =array_filter(json_decode($major['score'],true));
 			$this->assign('major_score_key',$major_score_key);
 		}*/
-		if($this->admin['school_id'])
-		{
-			$school_ids = json_decode($this->admin['school_id'],true);
-			$school_list = Db::name('school')->where(array('school_id' => array('in',$school_ids)))->select();
-		}else{
-			$school_list = Db::name('school')->select();
-		}
+
+		$school_list = Db::name('school')->select();
+
 
 		$this->assign('school_list',$school_list);
 		$this->assign('opentype_check',$opentype_check);
@@ -122,15 +120,9 @@ class Member extends Base
 		$this->assign('province',$province);
 		$member_group=Db::name('member_group')->order('member_group_order')->select();
 		$this->assign('member_group',$member_group);
-		if($this->admin['school_id'])
-		{
-			$school_ids = json_decode($this->admin['school_id'],true);
-			$school_list = Db::name('school')->where(array('school_id' => array('in',$school_ids)))->select();
-		}else{
-			$school_list = Db::name('school')->select();
-		}
-		$this->assign('school_list',$school_list);
-
+		$major_ids = json_decode($admin['major_id'],true);
+		$major_list = Db::name('major')->where(array('major_id' => array('in',$major_ids)))->select();
+        $this->assign('major_list',$major_list);
 		return $this->fetch();
 	}
 
@@ -145,7 +137,7 @@ class Member extends Base
 						->join(config('database.prefix').'auth_group c','b.group_id = c.id')
 						->where(array('a.admin_id'=>session('admin_auth.aid')))
 						->find();
-			$school_id =  input('school_id');
+		//	$school_id =  input('school_id');
 			$major_id =  input('major_id');
 			$member_list_salt=random(10);
 			$sl_data=array(
@@ -167,7 +159,7 @@ class Member extends Base
 				'signature'=>input('signature'),
 				'score'=>input('score',0,'intval'),
 				'coin'=>input('coin',0,'intval'),
-				'school_id' => $school_id,
+				'school_id' => $admin['school_id'],
 				'major_id' => $major_id
 			);
 			$rst=MemberList::create($sl_data);
@@ -200,15 +192,15 @@ class Member extends Base
 		$city=Db::name('Region')->where ( array('pid'=>$member_list_edit['member_list_province']) )->select ();
 		$town=Db::name('Region')->where ( array('pid'=>$member_list_edit['member_list_city']) )->select ();
 
-		if($this->admin['school_id'])
+		$school_list = Db::name('school')->select();
+		if($admin['major_id'])
 		{
-			$school_ids = json_decode($this->admin['school_id'],true);
-			$school_list = Db::name('school')->where(array('school_id' => array('in',$school_ids)))->select();
+			$major_ids = json_decode($admin['major_id'],true);
+			$major_list = Db::name('major')->where(array('major_id' => array('in',$major_ids)))->select();
 		}else{
-			$school_list = Db::name('school')->select();
+			$major_list = Db::name('major')->where(array('school_id' => $member_list_edit['school_id']))->select();
 		}
 
-		$major_list = Db::name('major')->where(array('school_id' => $member_list_edit['school_id']))->select();
 		$info =  MemberList::getMember(input('member_list_id'));
 		$major = Db::name('major')->where(array('major_id' => $member_list_edit['major_id']))->find();
 		$major_score = json_decode($major['score'],true);
@@ -493,10 +485,9 @@ class Member extends Base
 	}
 	public function member_import()
 	{
-
-		$school_ids = json_decode($this->admin['school_id'],true);
-		$school_list = Db::name('school')->where(array('school_id' => array('in',$school_ids)))->select();
-		$this->assign('school_list',$school_list);
+		$major_ids = json_decode($this->admin['major_id'],true);
+		$major_list = Db::name('major')->where(array('major_id' => array('in',$major_ids)))->select();
+		$this->assign('major_list',$major_list);
 		return $this->fetch();
 	}
 	public function member_runimport()
@@ -544,7 +535,7 @@ class Member extends Base
 	    				'user_status'=>0,
 	    				'score'=>0,
 	    				'coin'=>0,
-	    				'school_id' => input('school_id'),
+	    				'school_id' => $admin['school_id'],
 	    				'major_id' => input('major_id')
 	                ];
 	                $result = MemberList::create($sl_data);
