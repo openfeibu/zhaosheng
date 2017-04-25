@@ -262,6 +262,7 @@ $(function () {
 /* 通用表单不带检查操作，失败不跳转 */
 $(function () {
     $('.ajaxForm').ajaxForm({
+		beforeSubmit:beforeAjaxForm,
         success: complete2, // 这是提交后的方法
         dataType: 'json'
     });
@@ -269,6 +270,7 @@ $(function () {
 /* 通用表单不带检查操作，失败跳转 */
 $(function () {
     $('.ajaxForm2').ajaxForm({
+		beforeSubmit:beforeAjaxForm,
         success: complete, // 这是提交后的方法
         dataType: 'json'
     });
@@ -276,6 +278,7 @@ $(function () {
 /* 通用含验证码表单不带检查操作，失败不跳转 */
 $(function () {
     $('.ajaxForm3').ajaxForm({
+		beforeSubmit:beforeAjaxForm,
         success: complete3, // 这是提交后的方法
         dataType: 'json'
     });
@@ -304,8 +307,12 @@ $(function () {
         dataType: 'json'
     });
 });
+function beforeAjaxForm(){
+	load = layer.load(1);
+}
 //失败跳转
 function complete(data) {
+	layer.close(load);
     if (data.code == 1) {
         layer.alert(data.msg, {icon: 6}, function (index) {
             layer.close(index);
@@ -321,6 +328,7 @@ function complete(data) {
 }
 //失败不跳转
 function complete2(data) {
+	layer.close(load);
     if (data.code == 1) {
         layer.alert(data.msg, {icon: 6}, function (index) {
             layer.close(index);
@@ -334,6 +342,7 @@ function complete2(data) {
 }
 //失败不跳转,验证码刷新
 function complete3(data) {
+	layer.close(load);
     if (data.code == 1) {
         window.location.href = data.url;
     } else {
@@ -1097,6 +1106,16 @@ $(function(){
 			}
 		});
 	});
+	$("#secondary_vocat_school").change(function(){
+		var school_id = $(this).val();
+		$.ajax({
+			url: "/admin/School/ajax_secondary_vocat_major",
+			data:{'school_id':school_id},
+			success: function(data){
+				$("#major").html(data.html);
+			}
+		});
+	});
 	$("#recruit_school").change(function(){
 		var school_id = $(this).val();
 		$.ajax({
@@ -1107,7 +1126,40 @@ $(function(){
 			}
 		});
 	});
-
+	$('#enrollment_school').change(function(){
+		var school_id = $(this).val();
+		$.ajax({
+			url: "/admin/School/ajax_enrollment_recruit_major",
+			data:{'school_id':school_id},
+			success: function(data){
+				$("#enrollment_recruit_major").html(data.html);
+			}
+		});
+	});
+	$('body').on('change','.school_more',function () {
+		var school_id = $(this).val();
+		var $this = $(this);
+		//$this.next(".major_more").html('');
+		$.ajax({
+			url: "/admin/School/ajax_major",
+			data:{'school_id':school_id},
+			success: function(data){
+				$this.next(".major_more").html(data.html);
+			}
+		});
+	});
+	/*
+	$('.school_more').change(function(){
+		var school_id = $(this).val();
+		var $this = $(this);
+		$.ajax({
+			url: "/admin/School/ajax_major",
+			data:{'school_id':school_id},
+			success: function(data){
+				$this.next(".major_more").html(data.html);
+			}
+		});
+	});*/
 	$(".personal_table input").blur(function(){
 		var member_list_id = $('#member_list_id').val();
       	var value  = $(this).val();
@@ -1133,6 +1185,25 @@ $(function(){
 			if(count >=4)
 			{
 				$(".major_score_group").last().remove();
+			}
+		}
+
+	});
+	$('.hanle_school_count').click(function(){
+		var count = $("select[name='school_id[]']").length;
+		console.log(count);
+		if($(this).hasClass('fa-plus-circle'))
+		{
+			var html = '<div class="form-group school_group">' + $('#school_html').html() + '</div><div class="space-4"></div>';
+			$(this).parent().parent().before(html);
+
+		}
+		if($(this).hasClass('fa-minus-circle'))
+		{
+			if(count >=2)
+			{
+				$(".school_group").last().next('.space-4').remove();
+				$(".school_group").last().remove();
 			}
 		}
 
