@@ -930,12 +930,14 @@ $(function () {
 /*************************************************************************** 选择列表框change事件********************************************************/
 (function ($) {
 	$('body').on('change','.ajax_change',function () {
+		load = layer.load(2);
         var $form = $(this).parents("form");
 		$.ajax({
 		    url:$form.attr('action'),
 			type:"POST",
 			data:$form.serialize(),
 			success: function(data,status){
+				layer.close(load);
 				$("#ajax-data").html(data);
 			}
 		});
