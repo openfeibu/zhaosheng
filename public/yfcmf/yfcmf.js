@@ -1211,7 +1211,7 @@ $(function(){
 		console.log(count);
 		if($(this).hasClass('fa-plus-circle'))
 		{
-			var html = '<select name="major_id[]"  class="col-sm-5 major_more" style="width:20%;" required>' + $('#major').html() + '</select>';
+			var html = '<select name="major_id[]"  class="col-sm-5 major_more" style="width:20%;margin-right:10px;" required>' + $('#major').html() + '</select>';
 			$(this).before(html);
 
 		}
