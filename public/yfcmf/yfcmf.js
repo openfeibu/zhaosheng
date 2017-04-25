@@ -312,7 +312,7 @@ function beforeAjaxForm(){
 }
 //失败跳转
 function complete(data) {
-	layer.close(load);
+	if(typeof load!="undefined"){layer.close(load);}
     if (data.code == 1) {
         layer.alert(data.msg, {icon: 6}, function (index) {
             layer.close(index);
@@ -328,7 +328,7 @@ function complete(data) {
 }
 //失败不跳转
 function complete2(data) {
-	layer.close(load);
+	if(typeof load!="undefined"){layer.close(load);}
     if (data.code == 1) {
         layer.alert(data.msg, {icon: 6}, function (index) {
             layer.close(index);
@@ -342,7 +342,7 @@ function complete2(data) {
 }
 //失败不跳转,验证码刷新
 function complete3(data) {
-	layer.close(load);
+	if(typeof load!="undefined"){layer.close(load);}
     if (data.code == 1) {
         window.location.href = data.url;
     } else {
@@ -937,7 +937,7 @@ $(function () {
 			type:"POST",
 			data:$form.serialize(),
 			success: function(data,status){
-				layer.close(load);
+				if(typeof load!="undefined"){layer.close(load);}
 				$("#ajax-data").html(data);
 			}
 		});
@@ -1108,6 +1108,16 @@ $(function(){
 			}
 		});
 	});
+	$("#school_more").change(function(){
+		var school_id = $(this).val();
+		$.ajax({
+			url: "/admin/School/ajax_major",
+			data:{'school_id':school_id},
+			success: function(data){
+				$(".major_more").html(data.html);
+			}
+		});
+	});
 	$("#secondary_vocat_school").change(function(){
 		var school_id = $(this).val();
 		$.ajax({
@@ -1192,23 +1202,26 @@ $(function(){
 
 	});
 	$('.hanle_school_count').click(function(){
-		var count = $("select[name='school_id[]']").length;
+		if(!$('#school_more').val())
+		{
+			layer.alert('请先选择中职学校');
+			return false;
+		}
+		var count = $(".major_more").length;
 		console.log(count);
 		if($(this).hasClass('fa-plus-circle'))
 		{
-			var html = '<div class="form-group school_group">' + $('#school_html').html() + '</div><div class="space-4"></div>';
-			$(this).parent().parent().before(html);
+			var html = '<select name="major_id[]"  class="col-sm-5 major_more" style="width:20%;" required>' + $('#major').html() + '</select>';
+			$(this).before(html);
 
 		}
 		if($(this).hasClass('fa-minus-circle'))
 		{
 			if(count >=2)
 			{
-				$(".school_group").last().next('.space-4').remove();
-				$(".school_group").last().remove();
+				$(".major_more").last().remove();
 			}
 		}
-
 	});
 });
 function member_active()
