@@ -53,102 +53,12 @@
 						</div>
 					</div>
 					<div class="space-4"></div>
-<!--
-					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 积分：  </label>
-						<div class="col-sm-10">
-							<input type="text" name="score" id="score" placeholder="0" class="col-xs-10 col-sm-4" />
-						</div>
-					</div>
-					<div class="space-4"></div>
 
-					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 金币：  </label>
-						<div class="col-sm-10">
-							<input type="text" name="coin" id="coin" placeholder="0" class="col-xs-10 col-sm-4" />
-						</div>
-					</div>
-					<div class="space-4"></div>
 
-					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 所在地：  </label>
-						<div class="col-sm-10">
-							<select name="member_list_province" id="province" onChange="loadRegion('province',2,'city','{:url('admin/Ajax/getRegion')}');">
-								<option value="0" selected>省份/直辖市</option>
-								{volist name="province" id="vo"}
-								<option value="{$vo.id}" >{$vo.name}</option>
-								{/volist}
-							</select>
-							<select name="member_list_city" id="city"  onchange="loadRegion('city',3,'town','{:url('admin/Ajax/getRegion')}');">
-								<option value="0">市/县</option>
-							</select>
-							<select name="member_list_town" id="town">
-								<option value="0">镇/区</option>
-							</select>
-						</div>
-					</div>
-					<div class="space-4"></div>
-
-					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 性别：  </label>
-						<div class="col-sm-10">
-							<label>
-								<input name="member_list_sex" type="radio" value="1" class="ace" />
-								<span class="lbl"> 程序猿 </span>&nbsp;&nbsp;
-							</label>
-							<label>
-								<input name="member_list_sex" type="radio" value="2" class="ace" />
-								<span class="lbl"> 程序媛 </span>
-							</label>
-							<label>
-								<input name="member_list_sex" type="radio" value="3" checked class="ace" />
-								<span class="lbl"> 保密 </span>
-							</label>
-						</div>
-					</div>
-					<div class="space-4"></div>
-
-					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 手机号码：  </label>
-						<div class="col-sm-10">
-							<input type="text" name="member_list_tel" id="member_list_tel" placeholder="输入手机号码" class="col-xs-10 col-sm-4" required/>
-							<span class="lbl">&nbsp;&nbsp;<span class="red">*</span>只能填写数字</span>
-						</div>
-					</div>
-					<div class="space-4"></div>
-
-					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 个人网站：  </label>
-						<div class="col-sm-10">
-							<input type="url" name="user_url" id="user_url" placeholder="http://www.rainfer.cn" class="col-xs-10 col-sm-4" />
-							<span class="lbl">&nbsp;&nbsp;<span class="red"></span>http://开头</span>
-						</div>
-					</div>
-					<div class="space-4"></div>
-
-					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 签名：  </label>
-						<div class="col-sm-10">
-							<textarea  name="signature" cols="20" rows="4" class="col-xs-10 col-sm-4 limited"   id="form-field-12"  maxlength="125"></textarea>
-							<input type="hidden" name="maxlengthone" value="125" />
-							<span class="help-inline">&nbsp;&nbsp;还可以输入 <span class="middle charsLeft"></span> 个字符</span>
-						</div>
-					</div>
-					<div class="space-4"></div>
-
-					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 联系邮箱：  </label>
-						<div class="col-sm-10">
-							<input type="email" name="member_list_email" id="member_list_email" placeholder="输入联系邮箱" class="col-xs-10 col-sm-4" required/>
-							<span class="lbl">&nbsp;&nbsp;<span class="red">*</span>必填：用于找回密码</span>
-						</div>
-					</div>
-					<div class="space-4"></div>-->
-					{if condition="empty($admin['school_id'])"}
 					<div class="form-group">
 						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 所属中职：  </label>
 						<div class="col-sm-10">
-							<select name="school_id"  class="col-sm-5" id="school" required>
+							<select name="school_id"  class="col-sm-5" {if $admin['major_id']}id="secondary_vocat_school"{else}id="school"{/if} required>
 								<option value="">请选择所属中职</option>
 								{foreach name="school_list" item="v"}
 									<option value="{$v.school_id}">{$v.school_name}</option>
@@ -159,29 +69,29 @@
 
 					<div class="space-4"></div>
 					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 所属中职专业（添加中职管理员必选）: </label>
+						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 所属中职专业: </label>
 						<div class="col-sm-10">
 							<select name="major_id"  class="col-sm-5" id="major" required>
-
+								<option value="">请选择所属中职专业</option>
 							</select>
 						</div>
 					</div>
 					<div class="space-4"></div>
-					{/if}
-					<div class="form-group">
+
+					<!-- <div class="form-group">
 						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 是否开启（禁止后用户将不能登录）： </label>
 						<div class="col-sm-10" style="padding-top:5px;">
 							<input name="member_list_open" id="member_list_open" value="1" class="ace ace-switch ace-switch-4 btn-flat" type="checkbox" />
 							<span class="lbl">&nbsp;&nbsp;默认关闭</span>
 						</div>
 					</div>
-					<div class="space-4"></div>
+					<div class="space-4"></div> -->
 
 					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 是否激活（上传资料审核）： </label>
+						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 审核（上传资料审核）： </label>
 						<div class="col-sm-10" style="padding-top:5px;">
 							<input name="user_status" id="user_status" value="1" class="ace ace-switch ace-switch-4 btn-flat" type="checkbox" />
-							<span class="lbl">&nbsp;&nbsp;默认未激活</span>
+							<span class="lbl">&nbsp;&nbsp;默认未审核</span>
 						</div>
 					</div>
 					<div class="space-4"></div>

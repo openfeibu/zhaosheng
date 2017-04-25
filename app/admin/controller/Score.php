@@ -24,12 +24,37 @@ class Score extends Base
 					->join(config('database.prefix').'auth_group c','b.group_id = c.id')
 					->where(array('a.admin_id'=>session('admin_auth.aid')))
 					->find();
+
+        $major_list = [];
+		$school_ids = json_decode($admin['school_id'],true);
+		$major_ids = json_decode($admin['major_id'],true);
+		$school_major_arr = [];
+		foreach($major_ids as $k => $major_id)
+		{
+			$school_major_arr[$major_id] = $school_ids[$k];
+		}
+		foreach ($school_ids as $key => $school_id) {
+			$major_list[$school_id] = Db::name('major')->where(array('school_id' => $school_id))->select();
+		}
+		$this->assign('school_major_arr',$school_major_arr);
+		$school_list = Db::name('school')->where(['school_id' => array('in',$school_ids)])->select();
+
+        $major_id = input('major_id',0);
+        $school_id = input('school_id','');
+        $major_score_status = input('major_score_status','');
+
+        $map['m.major_id'] = $major_id;
+
+        if($major_score_status){
+            $map['ms.major_score_status'] = $major_score_status;
+        }
+
 		$score_list = Db::name('major_score')->alias("ms")
 						->join(config('database.prefix').'member_list m','m.member_list_id = ms.member_list_id')
                         ->join(config('database.prefix').'member_info mi','m.member_list_id = mi.member_list_id')
                         ->join(config('database.prefix').'major mj','mj.major_id = m.major_id')
                         ->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = m.major_id')
-						->where(array('m.major_id' => $admin['major_id']))
+						->where($map)
                         ->order('ms.major_score_status desc')
 						->field('ms.major_score, ms.major_score_id,ms.major_score_status,m.member_list_nickname , m.member_list_username, m.member_list_id,mj.score as major_score_key,mj.major_name,mj.major_name,mi.ZexamineeNumber')
 						->order('major_score_id desc')->paginate(config('paginate.list_rows'),false,['query'=>get_query()]);
@@ -51,13 +76,21 @@ class Score extends Base
 		}
 
 		$page = $score_list->render();
-		$major = Db::name('major')->where(array('major_id' => $admin['major_id']))->find();
-        $major_score = json_decode($major['score'],true);
-		$major_score = array_filter($major_score);
-		$this->assign('major_score',$major_score);
+		$major = Db::name('major')->where(array('major_id' => $major_id))->find();
+        if($major){
+            $major_score = json_decode($major['score'],true);
+    		$major_score = array_filter($major_score);
+    		$this->assign('major_score',$major_score);
+        }
+
+        $this->assign('school_list',$school_list);
 		$this->assign('data',$data);
 		$this->assign('page',$page);
-        return $this->fetch();
+        if(request()->isAjax()){
+            return $this->fetch('ajax_score_list');
+        }else{
+            return $this->fetch();
+        }
     }
 	 public function score_all()
     {

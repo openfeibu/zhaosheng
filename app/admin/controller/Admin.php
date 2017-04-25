@@ -150,8 +150,9 @@ class Admin extends Base
 	}
 	public function secondary_vocat_admin_runadd()
 	{
-		$major_id = null !== input('major_id') ? input('major_id') : 0;
-		$admin_id=AdminModel::add(input('admin_username'),'',input('admin_pwd'),input('admin_email',''),input('admin_tel',''),input('admin_open',0),input('admin_realname',''),3,input('school_id','0'),$major_id);
+		$school_id = json_encode($_POST['school_id']);
+		$major_id = json_encode($_POST['major_id']);
+		$admin_id=AdminModel::add(input('admin_username'),'',input('admin_pwd'),input('admin_email',''),input('admin_tel',''),input('admin_open',0),input('admin_realname',''),3,$school_id,$major_id);
 		if($admin_id){
 			$this->success('添加成功',url('admin/Admin/secondary_vocat_admin_list'));
 		}else{
@@ -163,8 +164,20 @@ class Admin extends Base
 		$auth_group=Db::name('auth_group')->select();
 		$admin_list=Db::name('admin')->find(input('admin_id'));
 		$auth_group_access=Db::name('auth_group_access')->where(array('uid'=>$admin_list['admin_id']))->value('group_id');
-		$school_list = Db::name('school')->select();
-		$major_list = Db::name('major')->where(array('school_id' => $admin_list['school_id']))->select();
+
+		$major_list = [];
+		$school_ids = json_decode($admin_list['school_id'],true);
+		$major_ids = json_decode($admin_list['major_id'],true);
+		$school_major_arr = [];
+		foreach($major_ids as $k => $major_id)
+		{
+			$school_major_arr[$major_id] = $school_ids[$k];
+		}
+		foreach ($school_ids as $key => $school_id) {
+			$major_list[$school_id] = Db::name('major')->where(array('school_id' => $school_id))->select();
+		}
+		$this->assign('school_major_arr',$school_major_arr);
+		$school_list = Db::name('school')->where(['school_id' => array('in',$school_ids)])->select();
 		$this->assign('school_list',$school_list);
 		$this->assign('major_list',$major_list);
 		$this->assign('admin_list',$admin_list);
@@ -175,6 +188,8 @@ class Admin extends Base
 	public function secondary_vocat_admin_runedit()
 	{
 		$data=input('post.');
+		$data['school_id'] = json_encode($_POST['school_id']);
+		$data['major_id'] = json_encode($_POST['major_id']);
 		$data['group_id'] = 3;
 		$rst=AdminModel::edit($data);
 		if($rst!==false){

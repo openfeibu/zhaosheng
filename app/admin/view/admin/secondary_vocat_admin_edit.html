@@ -64,26 +64,30 @@
 						</div>
 					</div>
 					<div class="space-4"></div>-->
-					<div class="form-group">
+					{foreach name='school_major_arr' item='v_school_id' key='k_major_id'}
+					<div class="form-group school_group" id='school_html'>
 						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 所属中职: </label>
 						<div class="col-sm-10">
-							<select name="school_id"  class="col-sm-5" id="school" required>
+							<select name="school_id[]"  class="col-sm-5 school_more"  style="width:20%;margin-right:10px;" required>
 								<option value="">请选择所属中职</option>
 								{foreach name="school_list" item="v"}
-									<option value="{$v.school_id}" {if condition="$v['school_id'] eq $admin_list.school_id"}selected{/if} >{$v.school_name}</option>
+									<option value="{$v.school_id}" {if condition="$v['school_id'] eq $v_school_id"}selected{/if} >{$v.school_name}</option>
+								{/foreach}
+							</select>
+							<select name="major_id[]"  class="col-sm-5 major_more" style="width:20%;"  required>
+								{foreach name="$major_list[$v_school_id]" item="v"}
+									<option value="{$v.major_id}" {if condition="$v['major_id'] eq $k_major_id"}selected{/if} >{$v.major_name}</option>
 								{/foreach}
 							</select>
 						</div>
 					</div>
 					<div class="space-4"></div>
+					{/foreach}
 					<div class="form-group">
-						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"> 所属中职专业: </label>
+						<label class="col-sm-2 control-label no-padding-right" for="form-field-1"></label>
 						<div class="col-sm-10">
-							<select name="major_id"  class="col-sm-5" id="major" required>
-								{foreach name="major_list" item="v"}
-									<option value="{$v.major_id}" {if condition="$v['major_id'] eq $admin_list.major_id"}selected{/if} >{$v.major_name}</option>
-								{/foreach}
-							</select>
+							<i class="hanle_school_count fa fa-plus-circle"></i>
+							<i class="hanle_school_count fa fa-minus-circle"></i>
 						</div>
 					</div>
 					<div class="space-4"></div>

@@ -24,12 +24,12 @@ class Matriculate extends Base
         $where['rm.recruit_major_id'] = $recruit_major_id;
         $recruit_major = Db::name('recruit_major')->alias('rm')
 							->join(config('database.prefix').'major mj','mj.recruit_major_id = rm.recruit_major_id')
+                            ->join(config('database.prefix').'enrollment e','e.recruit_major_id = rm.recruit_major_id')
 							->field(array(
 								'rm.*',
-								'sum(mj.number) as zs_number'
+								'e.enrollment_number as zs_number'
 							))
 							->where($where)
-							->group('rm.recruit_major_id')
 							->find();
         $member_model=new MemberList;
         $member_list=$member_model->alias('a')->join(config('database.prefix').'member_group b','a.member_list_groupid=b.member_group_id')
@@ -93,9 +93,10 @@ class Matriculate extends Base
         $where['rm.recruit_major_id'] = $recruit_major_id;
         $recruit_major = Db::name('recruit_major')->alias('rm')
 							->join(config('database.prefix').'major mj','mj.recruit_major_id = rm.recruit_major_id')
+                            ->join(config('database.prefix').'enrollment e','e.recruit_major_id = rm.recruit_major_id')
 							->field(array(
 								'rm.*',
-								'sum(mj.number) as zs_number'
+								'e.enrollment_number as zs_number'
 							))
 							->where($where)
 							->group('rm.recruit_major_id')

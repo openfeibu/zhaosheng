@@ -10,6 +10,7 @@ namespace app\admin\controller;
 
 use app\admin\model\School as SchoolModel;
 use app\admin\model\Major as MajorModel;
+use app\admin\model\Enrollment as EnrollmentModel;
 use app\admin\model\RecruitMajor as RecruitMajorModel;
 use think\Db;
 use think\Cache;
@@ -87,8 +88,6 @@ class School extends Base
 	}
 	public function major_add()
 	{
-		$recruit_major_list = Db::name('recruit_major')->select();
-		$this->assign('recruit_major_list',$recruit_major_list);
 		$school_list = Db::name('school')->select();
 		$this->assign('school_list',$school_list);
 		return $this->fetch();
@@ -135,10 +134,33 @@ class School extends Base
             return $this->fetch();
         }
 	}
+	public function secondary_vocat_major_list()
+	{
+		$admin=Db::name('admin')->alias("a")->join(config('database.prefix').'auth_group_access b','a.admin_id =b.uid')
+					->join(config('database.prefix').'auth_group c','b.group_id = c.id')
+					->where(array('a.admin_id'=>session('admin_auth.aid')))
+					->find();
+		$school_ids = json_decode($admin['school_id'],true);
+		$major_ids = json_decode($admin['major_id'],true);
+		$school_major_arr = $major_list = [];
 
+		$major_list = Db::name('major')->alias('mj')
+							->join(config('database.prefix').'school s','s.school_id = mj.school_id')
+							->where(array('major_id' => array('in',$major_ids)))
+							->order('s.school_id','DESC')
+							->select();
+		foreach($major_list as $key => $val)
+		{
+			$score_arr = json_decode($val['score'],true);
+			$major_list[$key]['score_desc'] = implode(' , ',$score_arr);
+		}
+		$this->assign('major_list',$major_list);
+
+		return $this->fetch();
+	}
 	public function secondary_vocat_major_edit()
 	{
-		$major_id= $this->admin['major_id'];
+		$major_id= input('major_id');
 		$major = Db::name('major')->where(array('major_id' => $major_id))->find();
 		if(!$major)
 		{
@@ -156,7 +178,7 @@ class School extends Base
 
 	public function secondary_vocat_major_runedit()
 	{
-		$major_id= $this->admin['major_id'];
+		$major_id= input('major_id');
 		$major = Db::name('major')->where(array('major_id' => $major_id))->find();
 		if(!$major)
 		{
@@ -168,9 +190,9 @@ class School extends Base
 		];
 		$rst = Db::name('major')->where(array('major_id' => $major['major_id']))->update($data);
 		if($rst!==false){
-			$this->success('修改成功',url('admin/School/secondary_vocat_major_edit'));
+			$this->success('修改成功',url('admin/School/secondary_vocat_major_list'));
 		}else{
-			$this->error('修改失败',url('admin/School/secondary_vocat_major_edit'));
+			$this->error('修改失败',url('admin/School/secondary_vocat_major_list'));
 		}
 	}
 
@@ -377,25 +399,119 @@ class School extends Base
 			];
 		}
 	}
+	public function ajax_enrollment_recruit_major()
+	{
+		if (!request()->isAjax()){
+			$this->error('提交方式不正确');
+		}else{
+			$school_id = input('school_id','0');
+			$recruit_major_list =Db::name('enrollment')->alias('e')
+									->join(config('database.prefix').'recruit_major rm','rm.recruit_major_id = e.recruit_major_id')
+									->where(['e.school_id' => $school_id])
+									->select();
+
+			$html = '<option value="">请选择高职专业</option>';
+			foreach($recruit_major_list as $key => $major)
+			{
+				$html .= "<option value='".$major['recruit_major_id']."'>".$major['recruit_major_name']."</option>";
+			}
+			return [
+				'code' => 200,
+				'html' => $html,
+			];
+		}
+	}
+	public function ajax_secondary_vocat_major()
+	{
+		if (!request()->isAjax()){
+			$this->error('提交方式不正确');
+		}else{
+			$school_id = input('school_id','0');
+			$admin=Db::name('admin')->alias("a")->join(config('database.prefix').'auth_group_access b','a.admin_id =b.uid')
+						->join(config('database.prefix').'auth_group c','b.group_id = c.id')
+						->where(array('a.admin_id'=>session('admin_auth.aid')))
+						->find();
+
+	        $major_list = [];
+			$major_ids = json_decode($admin['major_id'],true);
+			$major_list = Db::name('major')->where(array('school_id' => $school_id,'major_id' => array('in' , $major_ids)))->select();
+			$html = '<option value="">请选择中职专业</option>';
+			foreach($major_list as $key => $major)
+			{
+				$html .= "<option value='".$major['major_id']."'>".$major['major_name']."</option>";
+			}
+			return [
+				'code' => 200,
+				'html' => $html,
+			];
+		}
+	}
+	public function enrollment_add()
+	{
+		$recruit_major_list = Db::name('recruit_major')->select();
+		$this->assign('recruit_major_list',$recruit_major_list);
+		$school_list = Db::name('school')->select();
+		$this->assign('school_list',$school_list);
+		return $this->fetch();
+	}
+	public function enrollment_runadd()
+	{
+		$data = [
+			'recruit_major_id' => input('recruit_major_id'),
+			'school_id' => input('school_id'),
+			'enrollment_number' => input('enrollment_number'),
+		];
+		EnrollmentModel::create($data);
+		$this->success('添加成功',url('admin/School/enrollment'));
+	}
 	public function enrollment()
 	{
-		$majors = Db::name('major')->alias('mj')
+		$enrollments = Db::name('enrollment')->alias('e')
+							->join(config('database.prefix').'recruit_major rm','e.recruit_major_id = rm.recruit_major_id')
+							->join(config('database.prefix').'school s','e.school_id = s.school_id')
+							->select();
+		/*
+		$enrollments = Db::name('major')->alias('mj')
 							->join(config('database.prefix').'recruit_major rm','mj.recruit_major_id = rm.recruit_major_id')
 							->join(config('database.prefix').'school s','mj.school_id = s.school_id')
 							->order('mj.school_id')
-							->select();
-		$this->assign('majors',$majors);
+							->select();*/
+		foreach ($enrollments as $key => $enrollment) {
+			$majors = Db::name('major')->where(['recruit_major_id' => $enrollment['recruit_major_id'],'school_id' => $enrollment['school_id']])->select();
+			$major_desc = '';
+			foreach ($majors as $k => $major) {
+				$major_desc.= $major['major_name'] . '(' . $major['major_code'] . ') ';
+			}
+			$enrollments[$key]['majors'] = $majors;
+			$enrollments[$key]['major_desc'] = $major_desc;
+		}
+		$this->assign('enrollments',$enrollments);
 		return $this->fetch();
 	}
 	public function export_enrollment()
 	{
+		/*
 		$data = Db::name('major')->alias('mj')
 							->join(config('database.prefix').'recruit_major rm','mj.recruit_major_id = rm.recruit_major_id')
 							->join(config('database.prefix').'school s','mj.school_id = s.school_id')
 							->order('mj.school_id')
+							->select();*/
+		$enrollments = Db::name('enrollment')->alias('e')
+							->join(config('database.prefix').'recruit_major rm','e.recruit_major_id = rm.recruit_major_id')
+							->join(config('database.prefix').'school s','e.school_id = s.school_id')
 							->select();
-        $field_titles = ['中职学校','中职专业','中职专业代码','高职专业','高职专业代码','招生计划数'];
-        $fields = ['school_name','major_name','major_code','recruit_major_name','recruit_major_code','number'];
+		foreach ($enrollments as $key => $enrollment) {
+			$majors = Db::name('major')->where(['recruit_major_id' => $enrollment['recruit_major_id'],'school_id' => $enrollment['school_id']])->select();
+			$major_desc = '';
+			foreach ($majors as $k => $major) {
+				$major_desc.= $major['major_name'] . '(' . $major['major_code'] . ') ';
+			}
+			$enrollments[$key]['majors'] = $majors;
+			$enrollments[$key]['major_desc'] = $major_desc;
+		}
+		$data = $enrollments;
+        $field_titles = ['对口中职学校名称','高职专业名称','高职专业代码','对口中职专业名称(含代码)','招生计划数'];
+        $fields = ['school_name','recruit_major_name','recruit_major_code','major_desc','enrollment_number'];
         $table = '招生计划表'.date('YmdHis');
         error_reporting(E_ALL);
         date_default_timezone_set('Asia/chongqing');
